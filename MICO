@@ -1,0 +1,604 @@
+Top 50 Microservices Interview Questions with Answers
+These questions are important for Java Backend Developer, Spring Boot Developer and Java Full Stack Developer interviews, especially for freshers and campus placements.
+
+Since you're learning Spring Boot microservices with PostgreSQL and Maven, I've included architecture, service communication, Spring Cloud, API Gateway, Eureka, security, fault tolerance and practical scenarios.
+1. Microservices Fundamentals
+1. What are microservices?
+
+Microservices are an architectural style in which a large application is divided into small, independent services.
+
+Each service:
+- Handles a specific business functionality.
+- Can be developed independently.
+- Can be deployed independently.
+- Can communicate with other services.
+- Can manage its own data.
+Example: An e-commerce application.
+
+
+
+
+
+
+
+medium.com
+
+
+2. What is monolithic architecture?
+
+Monolithic architecture is an approach where all application modules are developed and deployed as a single application.
+
+Example:
+- User module
+- Product module
+- Payment module
+- Order module
+All modules run as one application.
+
+3. Difference between monolithic and microservices architecture?
+Monolithic	Microservices
+Single application	Multiple independent services
+Single deployment unit	Independent deployments
+Usually one application codebase	Multiple service codebases
+Scaling often affects the whole application	Individual services can be scaled
+Changes can affect other modules	Services can be changed independently
+Simpler initially	More operational complexity
+
+4. Why do we use microservices?
+- Independent deployment.
+- Independent scaling.
+- Easier maintenance of large systems.
+- Technology flexibility.
+- Better fault isolation when designed properly.
+- Independent development teams.
+5. What are the disadvantages of microservices?
+- Complex communication.
+- Distributed debugging.
+- Network failures.
+- Data consistency challenges.
+- Deployment complexity.
+- Monitoring and security challenges.
+6. What is a service in microservices?
+
+A service is an independently deployable application responsible for a particular business capability.
+
+Example:
+- Student Service
+- Course Service
+- Payment Service
+7. What is bounded context?
+
+Bounded context is a concept from Domain-Driven Design (DDD).
+
+It defines the boundary within which a particular domain model and its terminology have a specific meaning.
+
+Example: A Student in the Admission domain may have different information and responsibilities from a Student in the Examination domain.
+
+8. What is loose coupling?
+
+Loose coupling means services have minimal dependencies on each other's internal implementation.
+
+A service should communicate through well-defined APIs or messaging contracts rather than accessing another service's internal code or database.
+
+9. What is high cohesion?
+
+High cohesion means a service contains closely related functionalities that belong to one business responsibility.
+
+10. What is service independence?
+
+Service independence means each microservice can be developed, tested, deployed and scaled separately without requiring the entire application to be redeployed.
+2. Microservices Communication
+11. How do microservices communicate with each other?
+
+Two major approaches:
+1. Synchronous communication:
+   - REST API
+   - OpenFeign
+   - WebClient
+   - gRPC
+2. Asynchronous communication:
+   - Apache Kafka
+   - RabbitMQ
+   - Message queues
+12. What is synchronous communication?
+
+The caller sends a request and waits for a response.
+
+Example:
+
+Student Service calls Course Service and waits for course details.
+
+13. What is asynchronous communication?
+
+The sender publishes a message without waiting for the receiver to finish processing it.
+
+Example:
+
+Order Service publishes an order-created event, and Notification Service processes it independently.
+
+14. What is REST API?
+
+REST stands for Representational State Transfer.
+
+It is an architectural style used to communicate between applications using HTTP methods such as GET, POST, PUT, PATCH and DELETE.
+
+15. What is OpenFeign?
+
+OpenFeign is a declarative HTTP client used in Spring Cloud to communicate with other microservices.
+
+Example:
+@FeignClient(name = "course-service")
+public interface CourseClient {
+
+    @GetMapping("/courses/{id}")
+    Course getCourse(@PathVariable Long id);
+}
+
+
+Instead of writing HTTP client code manually, we define an interface.
+
+16. Difference between RestTemplate, WebClient and OpenFeign?
+RestTemplate	WebClient	OpenFeign
+Synchronous	Supports reactive and non-blocking calls	Declarative client
+Traditional API	Modern HTTP client	Interface-based
+Blocking	Can be non-blocking	Typically blocking
+In maintenance mode	Recommended for reactive use cases	Convenient for service-to-service calls
+
+17. What is API Gateway?
+
+API Gateway is a single entry point through which external clients access microservices.
+
+Responsibilities:
+- Routing.
+- Authentication.
+- Authorization integration.
+- Rate limiting.
+- Request filtering.
+- Cross-cutting concerns.
+
+
+
+
+
+
+
+medium.com
+
+
+18. What is service discovery?
+
+Service discovery is the process of automatically identifying available service instances without hardcoding their IP addresses and ports.
+
+19. What is Eureka Server?
+
+Eureka Server is a service registry provided by Spring Cloud Netflix.
+
+Microservices register themselves with Eureka Server, and other services can discover them.
+
+
+
+
+
+
+
+medium.com
+
+
+20. What is the difference between service registration and service discovery?
+- Service registration: A microservice registers its network location with the registry.
+- Service discovery: Another service queries the registry to locate the required service.
+3. Spring Cloud and Microservices Components
+21. What is Spring Cloud?
+
+Spring Cloud is a collection of tools and libraries that simplify the development of distributed systems and microservices.
+
+It provides:
+- Service discovery.
+- API Gateway.
+- Centralized configuration.
+- Load balancing.
+- Circuit breaker integration.
+- Distributed messaging.
+22. What is Spring Cloud Config Server?
+
+It provides centralized configuration management for multiple microservices.
+
+Example:
+
+Suppose you have:
+- Student Service
+- Course Service
+- Payment Service
+Instead of maintaining configuration separately, they can retrieve externalized configuration from a central Config Server.
+
+23. What is load balancing?
+
+Load balancing distributes incoming requests among multiple instances of a service.
+
+Example:
+
+
+
+
+
+
+
+callistaenterprise.se
+
+
+If three Student Service instances are running, requests can be distributed among them.
+
+Spring Cloud LoadBalancer provides client-side load balancing.
+
+24. What is the difference between client-side and server-side load balancing?
+Client-side	Server-side
+Client selects the instance	Load balancer selects the instance
+Client needs service discovery or instance information	Client calls a load balancer endpoint
+Example: Spring Cloud LoadBalancer	Example: NGINX, cloud load balancers
+
+25. What is Circuit Breaker pattern?
+
+Circuit Breaker prevents repeated requests to a failing service.
+
+It has three main states:
+1. Closed – Requests are allowed.
+2. Open – Requests are blocked temporarily.
+3. Half-Open – A few test requests are allowed.
+
+
+
+
+
+
+
+medium.com
+
+
+26. What is Resilience4j?
+
+Resilience4j is a lightweight fault-tolerance library for Java applications.
+
+It provides:
+- Circuit Breaker
+- Retry
+- Rate Limiter
+- Bulkhead
+- Time Limiter
+27. What is a fallback method?
+
+A fallback method provides an alternative response when a dependent service fails.
+
+Example:
+@CircuitBreaker(
+    name = "courseService",
+    fallbackMethod = "courseFallback"
+)
+public String getCourse() {
+    return courseClient.getCourse();
+}
+
+public String courseFallback(Exception ex) {
+    return "Course service is unavailable";
+}
+
+
+28. What is distributed tracing?
+
+Distributed tracing tracks a request as it travels through multiple microservices.
+
+Example:
+
+Client → API Gateway → Student Service → Course Service.
+
+It helps identify where delays or failures occur.
+
+Common tools:
+- OpenTelemetry
+- Zipkin
+- Jaeger
+29. What is centralized logging?
+
+Centralized logging collects logs from multiple microservices in one location.
+
+Popular technologies:
+- Elasticsearch
+- Logstash
+- Kibana
+- Grafana Loki
+30. What is Spring Boot Actuator?
+
+Actuator provides monitoring and management endpoints for Spring Boot applications.
+
+Examples:
+/actuator/health
+/actuator/info
+/actuator/metrics
+
+
+It helps monitor service health and application metrics.
+
+4. Database and Distributed Transactions
+31. What is Database per Service pattern?
+
+Each microservice owns its own database or logically isolated data store.
+
+Example:
+
+
+
+
+
+
+
+blog.bytebytego.com
+
+
+- Student Service → Student Database.
+- Course Service → Course Database.
+- Payment Service → Payment Database.
+One service should not directly access another service's private database.
+
+32. Why should microservices not share the same database?
+
+Sharing databases creates tight coupling between services.
+
+Problems include:
+- Schema dependency.
+- Independent deployment becomes difficult.
+- Data ownership becomes unclear.
+- Changes can break other services.
+33. What is distributed transaction?
+
+A distributed transaction is a transaction that involves multiple services or databases.
+
+Example:
+
+An order requires:
+1. Order Service to create an order.
+2. Payment Service to process payment.
+3. Inventory Service to reserve stock.
+All these operations must be coordinated.
+
+34. What is Saga Pattern?
+
+Saga is a design pattern used to manage distributed transactions through a sequence of local transactions.
+
+If a step fails, compensating transactions are executed to undo the effects of previous steps.
+
+Example:
+
+
+
+
+
+
+
+learn.microsoft.com
+
+
+Order → Payment → Inventory.
+
+If inventory reservation fails, the system can initiate a payment refund and cancel the order.
+
+35. What are the types of Saga Pattern?
+1. Choreography – Services coordinate through events without a central controller.
+2. Orchestration – A central orchestrator coordinates the transaction steps.
+36. What is eventual consistency?
+
+Eventual consistency means data across distributed services may not be immediately consistent, but it becomes consistent after updates and messages have propagated successfully.
+
+Example:
+
+After payment, the order status might briefly show PAYMENT_PENDING before becoming CONFIRMED.
+
+37. What is CQRS?
+
+CQRS stands for Command Query Responsibility Segregation.
+
+It separates:
+- Command operations – Create, update and delete.
+- Query operations – Read data.
+This can help when read and write workloads have different requirements.
+
+5. Security in Microservices
+38. How do you secure microservices?
+
+Common security approaches:
+- Spring Security.
+- JWT authentication.
+- OAuth 2.0.
+- Role-based authorization.
+- HTTPS.
+- API Gateway security.
+- Service-to-service authentication.
+39. What is JWT authentication in microservices?
+
+JWT is a token-based authentication approach.
+
+Typical flow:
+1. User logs in.
+2. Authentication Service validates credentials.
+3. Server issues a signed JWT.
+4. Client sends the token with subsequent requests.
+5. API Gateway or individual services validate the token and authorize access.
+
+
+
+
+
+
+
+dev.to
+
+
+40. What is OAuth 2.0?
+
+OAuth 2.0 is an authorization framework that allows applications to obtain limited access to protected resources.
+
+It is commonly used with OpenID Connect for user authentication.
+
+6. Advanced Microservices Interview Questions
+41. What is Docker?
+
+Docker is a containerization platform used to package applications and their dependencies into containers.
+
+Benefits:
+- Portability.
+- Consistent environments.
+- Easier deployment.
+- Isolation.
+42. What is Kubernetes?
+
+Kubernetes is a container orchestration platform used to deploy, scale and manage containerized applications.
+
+43. What is the difference between Docker and Kubernetes?
+Docker	Kubernetes
+Containerization platform	Container orchestration platform
+Builds and runs containers	Manages containerized applications
+Provides container tooling	Provides scaling, scheduling and recovery
+
+44. What is idempotency in microservices?
+
+An operation is idempotent if performing it multiple times produces the same intended result as performing it once.
+
+Example:
+
+A DELETE request for the same resource should not cause additional unintended effects on repeated execution.
+
+For payment APIs, idempotency keys help prevent duplicate charges.
+
+45. What is rate limiting?
+
+Rate limiting controls the number of requests a client can make within a specified time period.
+
+Example:
+
+Allow a maximum of 100 requests per minute per client.
+
+46. What is Bulkhead Pattern?
+
+Bulkhead isolates resources so that failure in one component does not consume all resources and affect other components.
+
+Example:
+
+Separate thread pools for Payment Service and Notification Service.
+
+47. What is Retry Pattern?
+
+Retry automatically attempts an operation again when a temporary failure occurs.
+
+Example:
+
+If Course Service is temporarily unavailable, Student Service can retry the request a limited number of times.
+
+Use backoff and appropriate retry limits to avoid overloading a failing service.
+
+48. What is the Strangler Pattern?
+
+The Strangler Pattern is used to gradually migrate a monolithic application into microservices.
+
+Instead of replacing the entire monolith immediately, functionality is moved to new services step by step.
+
+49. What is event-driven architecture?
+
+Event-driven architecture is a design approach where services communicate through events.
+
+Example:
+1. Order Service publishes OrderCreated.
+2. Payment Service receives the event.
+3. Inventory Service receives the event.
+4. Notification Service sends a notification.
+50. What is the difference between Kafka and RabbitMQ?
+Apache Kafka	RabbitMQ
+Distributed event streaming platform	Message broker
+Stores events in topics	Uses exchanges and queues
+Supports replay within retention	Message acknowledgment and queue-based delivery
+Suitable for high-throughput event streaming	Suitable for task queues and message routing
+Consumer groups	Consumers and queues
+
+
+7. Practical Scenario-Based Interview Questions
+These questions are especially important because interviewers want to know whether you understand how microservices work in real projects.
+
+51. What happens if one microservice goes down?
+
+If one service goes down:
+- Other independent services should continue working.
+- Circuit Breaker can prevent repeated failed requests.
+- Fallback responses can be provided.
+- Retry can handle temporary failures.
+- Monitoring tools can detect the failure.
+52. How do you call one microservice from another?
+
+Example: Student Service needs Course Service data.
+
+Using OpenFeign:
+@FeignClient(name = "course-service")
+public interface CourseClient {
+
+    @GetMapping("/courses/{id}")
+    Course getCourse(@PathVariable Long id);
+}
+
+
+Student Service calls the Course Service through this client.
+
+53. What happens when two microservices need the same data?
+
+Each service maintains ownership of its own data.
+
+If another service needs that information, it can:
+- Call the owning service's API.
+- Subscribe to events and maintain a local copy.
+- Use an appropriate data synchronization strategy.
+54. How do you handle failures during service communication?
+
+Use:
+- Timeout.
+- Retry.
+- Circuit Breaker.
+- Fallback.
+- Bulkhead.
+- Proper exception handling.
+55. How do you test microservices?
+
+Common testing approaches:
+Testing	Purpose	Tools
+Unit testing	Test individual methods	JUnit, Mockito
+Integration testing	Test application components together	Spring Boot Test
+API testing	Test REST endpoints	Postman
+Contract testing	Verify service communication contracts	Spring Cloud Contract
+End-to-end testing	Test complete workflows	REST Assured
+
+
+8. Important Microservices Architecture to Remember
+Consider a Student Management System.
+
+
+
+
+
+
+
+github.com
+
+
+Component	Responsibility
+API Gateway	Receives client requests
+Eureka Server	Service registration and discovery
+Student Service	Manages students
+Course Service	Manages courses
+Exam Service	Manages examinations
+Notification Service	Sends notifications
+PostgreSQL	Stores service-owned data
+Config Server	Centralized configuration
+
+Request flow:
+1. Client sends a request.
+2. API Gateway receives it.
+3. Gateway identifies the destination service.
+4. Service discovery helps locate the service instance.
+5. The target microservice processes the request.
+6. The service accesses its database.
+7. Response returns to the client.
+9. Most Important Topics for Campus Placemen
