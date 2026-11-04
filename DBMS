@@ -1,0 +1,437 @@
+Top 50 DBMS Interview Questions with Answers
+These are the most commonly asked DBMS (Database Management System) interview questions for freshers and entry-level software developer roles, especially Java Full Stack and backend developer interviews.
+
+I've arranged them from basic to advanced so you can prepare systematically.
+1. DBMS Fundamentals
+1. What is DBMS?
+
+DBMS stands for Database Management System. It is software used to store, manage, retrieve, and manipulate data efficiently.
+
+Examples:
+- MySQL
+- PostgreSQL
+- Oracle
+- SQL Server
+- MongoDB
+2. What is RDBMS?
+
+RDBMS stands for Relational Database Management System. It stores data in tables consisting of rows and columns and establishes relationships between tables.
+
+Examples: MySQL, PostgreSQL, Oracle.
+
+3. Difference between DBMS and RDBMS?
+DBMS	RDBMS
+Manages databases	Manages relational databases
+May not support relationships	Supports relationships
+Less emphasis on constraints	Supports constraints
+May store data in different formats	Stores data in tables
+Example: File-based DBMS	Example: MySQL
+
+4. What is a database?
+
+A database is an organized collection of data that can be easily accessed, managed, and updated.
+
+5. What is SQL?
+
+SQL stands for Structured Query Language. It is used to communicate with relational databases.
+
+Common SQL operations:
+- CREATE
+- INSERT
+- UPDATE
+- DELETE
+- SELECT
+- DROP
+6. What are the different types of SQL commands?
+
+There are five major categories:
+Category	Purpose	Commands
+DDL	Defines database structure	CREATE, ALTER, DROP, TRUNCATE
+DML	Modifies data	INSERT, UPDATE, DELETE
+DQL	Retrieves data	SELECT
+DCL	Controls permissions	GRANT, REVOKE
+TCL	Manages transactions	COMMIT, ROLLBACK, SAVEPOINT
+
+7. What is a schema?
+
+A schema is the logical structure of a database. It defines tables, columns, relationships, constraints, and other database objects.
+
+8. What is a table?
+
+A table is a collection of related data organized into rows and columns.
+
+9. What is the difference between a row and a column?
+- Row: Represents one complete record.
+- Column: Represents a particular attribute of the record.
+10. What is a primary key?
+
+A primary key uniquely identifies each record in a table.
+
+Properties:
+- Must contain unique values.
+- Cannot contain NULL.
+- Only one primary key constraint per table (it can contain multiple columns).
+Example:
+CREATE TABLE Student (
+    id INT PRIMARY KEY,
+    name VARCHAR(50),
+    age INT
+);
+
+
+2. Keys in DBMS
+11. What are the different types of keys in DBMS?
+1. Primary Key – Uniquely identifies a record.
+2. Foreign Key – Establishes relationships between tables.
+3. Candidate Key – Minimal attribute set that uniquely identifies records.
+4. Super Key – Any attribute set that uniquely identifies records.
+5. Alternate Key – Candidate key not selected as primary key.
+6. Composite Key – Key consisting of multiple columns.
+7. Unique Key – Enforces uniqueness.
+12. What is a foreign key?
+
+A foreign key is a column or group of columns that references a candidate key (usually the primary key) in another table.
+
+Example:
+CREATE TABLE Department (
+    dept_id INT PRIMARY KEY,
+    dept_name VARCHAR(50)
+);
+
+CREATE TABLE Employee (
+    emp_id INT PRIMARY KEY,
+    emp_name VARCHAR(50),
+    dept_id INT,
+    FOREIGN KEY (dept_id)
+    REFERENCES Department(dept_id)
+);
+
+
+13. Difference between primary key and unique key?
+Primary Key	Unique Key
+Uniquely identifies records	Ensures unique values
+Cannot contain NULL	NULL handling depends on DBMS
+One primary key constraint	Multiple unique constraints
+Main identifier	Additional uniqueness constraint
+
+14. What is a composite key?
+
+A composite key is a key formed using two or more columns to uniquely identify a record.
+
+Example:
+CREATE TABLE Enrollment (
+    student_id INT,
+    course_id INT,
+    PRIMARY KEY(student_id, course_id)
+);
+
+
+15. Difference between candidate key and super key?
+- Super Key: Any set of attributes that uniquely identifies a row.
+- Candidate Key: A minimal super key without unnecessary attributes.
+3. SQL Interview Questions
+16. Difference between DELETE, TRUNCATE, and DROP?
+DELETE	TRUNCATE	DROP
+Deletes selected rows or all rows	Removes all rows	Removes entire table
+Supports WHERE	No WHERE	No WHERE
+Table structure remains	Structure remains	Structure removed
+DML command	Usually classified as DDL	DDL command
+
+17. What is the difference between WHERE and HAVING?
+- WHERE filters individual rows before grouping.
+- HAVING filters groups after GROUP BY.
+Example:
+SELECT department, COUNT(*)
+FROM Employee
+WHERE salary > 20000
+GROUP BY department
+HAVING COUNT(*) > 5;
+
+
+18. What is GROUP BY?
+
+GROUP BY groups rows with identical values in specified columns.
+SELECT department, COUNT(*)
+FROM Employee
+GROUP BY department;
+
+
+19. What is ORDER BY?
+
+ORDER BY sorts query results in ascending or descending order.
+SELECT * FROM Employee
+ORDER BY salary DESC;
+
+
+20. What are aggregate functions?
+
+Aggregate functions perform calculations on multiple rows and return a single result.
+
+Common functions:
+- COUNT()
+- SUM()
+- AVG()
+- MIN()
+- MAX()
+21. What is a JOIN?
+
+JOIN is used to retrieve related data from multiple tables based on a common column.
+
+Types of JOIN:
+
+
+
+
+
+
+
+learnsql.com
+
+
+- INNER JOIN
+- LEFT JOIN
+- RIGHT JOIN
+- FULL OUTER JOIN
+- CROSS JOIN
+- SELF JOIN
+22. Difference between INNER JOIN and LEFT JOIN?
+- INNER JOIN: Returns only matching records from both tables.
+- LEFT JOIN: Returns all records from the left table and matching records from the right table. Non-matching right-side values become NULL.
+23. What is a SELF JOIN?
+
+A SELF JOIN joins a table with itself.
+
+Example: Finding employees and their managers.
+SELECT e.name, m.name AS manager
+FROM Employee e
+LEFT JOIN Employee m
+ON e.manager_id = m.emp_id;
+
+
+24. What is a subquery?
+
+A subquery is a query written inside another SQL query.
+SELECT *
+FROM Employee
+WHERE salary > (
+    SELECT AVG(salary)
+    FROM Employee
+);
+
+
+25. Difference between UNION and UNION ALL?
+UNION	UNION ALL
+Removes duplicate records	Keeps duplicate records
+Usually slower	Usually faster
+Combines query results	Combines query results
+
+4. Normalization
+26. What is normalization?
+
+Normalization is the process of organizing database tables to reduce data redundancy and avoid insertion, deletion, and update anomalies.
+
+27. What are the different normal forms?
+
+
+
+
+
+
+
+adevguide.com
+
+
+- 1NF: Each column contains atomic values; no repeating groups.
+- 2NF: Must be in 1NF and have no partial dependency of non-prime attributes on candidate keys.
+- 3NF: Must be in 2NF and have no transitive dependency of non-prime attributes on candidate keys.
+- BCNF: Every determinant must be a super key.
+28. What is denormalization?
+
+Denormalization is the process of intentionally introducing redundancy to improve read performance and reduce expensive joins.
+
+29. What are database anomalies?
+
+Three major anomalies:
+1. Insertion Anomaly – Cannot insert data without other unrelated data.
+2. Update Anomaly – Same information must be updated in multiple places.
+3. Deletion Anomaly – Deleting one record accidentally removes other important information.
+5. Transactions and ACID Properties
+30. What is a transaction?
+
+A transaction is a sequence of database operations treated as one logical unit of work.
+
+Example: Bank money transfer.
+BEGIN;
+
+UPDATE Account
+SET balance = balance - 1000
+WHERE id = 1;
+
+UPDATE Account
+SET balance = balance + 1000
+WHERE id = 2;
+
+COMMIT;
+
+
+31. What are ACID properties?
+
+
+
+
+
+
+
+wasilzafar.com
+
+
+Property	Meaning
+Atomicity	All operations succeed or none
+Consistency	Database remains valid
+Isolation	Concurrent transactions do not interfere improperly
+Durability	Committed changes survive failures
+
+32. What is COMMIT?
+
+COMMIT permanently saves the changes made by a transaction.
+
+33. What is ROLLBACK?
+
+ROLLBACK cancels uncommitted changes made in the current transaction.
+
+34. What is SAVEPOINT?
+
+SAVEPOINT creates a point inside a transaction to which you can partially roll back.
+BEGIN;
+
+UPDATE Account SET balance = 5000 WHERE id = 1;
+
+SAVEPOINT sp1;
+
+UPDATE Account SET balance = 3000 WHERE id = 2;
+
+ROLLBACK TO sp1;
+
+COMMIT;
+
+
+35. What is concurrency control?
+
+Concurrency control manages simultaneous database transactions to maintain data consistency and isolation.
+
+Common techniques:
+- Lock-based protocols
+- Two-Phase Locking (2PL)
+- Timestamp ordering
+- MVCC (Multi-Version Concurrency Control)
+6. Advanced DBMS Questions
+36. What is indexing in DBMS?
+
+Indexing is a technique used to improve data retrieval speed by creating an additional data structure that helps locate records efficiently.
+
+Example:
+CREATE INDEX idx_employee_name
+ON Employee(name);
+
+
+37. What are the types of indexes?
+- Clustered Index
+- Non-clustered Index
+- Unique Index
+- Composite Index
+- B-Tree Index
+- Hash Index
+The exact implementation and availability depend on the DBMS.
+
+38. What is a view?
+
+A view is a virtual table created using an SQL query.
+CREATE VIEW Employee_View AS
+SELECT name, salary
+FROM Employee;
+
+
+39. What is a stored procedure?
+
+A stored procedure is a reusable collection of SQL statements stored in the database.
+
+40. What is a trigger?
+
+A trigger is a database operation that automatically executes when a specified event occurs, such as INSERT, UPDATE, or DELETE.
+
+41. What is a cursor?
+
+A cursor is a database mechanism used to process query results row by row.
+
+42. What is a deadlock?
+
+A deadlock occurs when two or more transactions wait indefinitely for resources locked by each other.
+
+Example:
+- Transaction T1 locks resource A and waits for B.
+- Transaction T2 locks resource B and waits for A.
+43. What is the difference between OLTP and OLAP?
+OLTP	OLAP
+Online Transaction Processing	Online Analytical Processing
+Handles daily transactions	Handles analytical queries
+Frequent INSERT, UPDATE, DELETE	Mostly complex SELECT queries
+Example: Banking system	Example: Sales analytics
+
+44. What is the difference between SQL and NoSQL?
+SQL	NoSQL
+Relational databases	Non-relational databases
+Structured tables	Document, key-value, graph, etc.
+Often uses fixed schemas	Often supports flexible schemas
+SQL queries	Database-specific query mechanisms
+MySQL, PostgreSQL	MongoDB, Redis, Cassandra
+
+45. What is a NULL value?
+
+NULL represents missing, unknown, or unavailable data. It is different from zero or an empty string.
+SELECT *
+FROM Employee
+WHERE salary IS NULL;
+
+
+7. Practical SQL Coding Questions
+These are particularly important in fresher interviews.
+
+46. Find the second-highest salary.
+SELECT MAX(salary)
+FROM Employee
+WHERE salary < (
+    SELECT MAX(salary)
+    FROM Employee
+);
+
+
+47. Find duplicate records based on email.
+SELECT email, COUNT(*)
+FROM Employee
+GROUP BY email
+HAVING COUNT(*) > 1;
+
+
+48. Find employees earning more than the average salary.
+SELECT *
+FROM Employee
+WHERE salary > (
+    SELECT AVG(salary)
+    FROM Employee
+);
+
+
+49. Find the highest salary in each department.
+SELECT department, MAX(salary)
+FROM Employee
+GROUP BY department;
+
+
+50. Find the third-highest distinct salary.
+SELECT DISTINCT salary
+FROM Employee
+ORDER BY salary DESC
+LIMIT 1 OFFSET 2;
+
+
+Questions 46–50 use PostgreSQL/MySQL-compatible syntax. LIMIT/OFFSET syntax is database-dependent.
