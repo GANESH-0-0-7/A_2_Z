@@ -1,0 +1,719 @@
+Real-Time Scenario-Based Interview Questions
+OOP + DBMS + Core Java + Spring Boot | Java Backend Developer Interviews
+
+These are the types of practical questions interviewers ask to check whether you can solve actual production problems, not just explain definitions.
+
+For example:
+- What happens when 10,000 users access your application simultaneously?
+- What if two users try to book the same movie ticket?
+- How do you prevent duplicate payments?
+- What if your server crashes during a transaction?
+- How do you handle multiple requests updating the same database record?
+I'll explain each scenario with the problem, expected solution, technical concepts, and interview-ready answer.
+1. DBMS – Real-Time Scenarios
+Q1. Two users try to book the same movie seat simultaneously. How do you handle it?
+
+
+
+
+
+
+
+seongminkim.tistory.com
+
+
+Scenario:
+- User A selects seat A10.
+- User B selects seat A10 at almost the same time.
+- Both click Book.
+How do you prevent both users from booking the same seat?
+
+Solution: Database transaction + unique constraint + locking.
+
+First, create a unique constraint:
+CREATE TABLE Booking (
+    booking_id BIGINT PRIMARY KEY,
+    show_id BIGINT NOT NULL,
+    seat_number VARCHAR(10) NOT NULL,
+    user_id BIGINT NOT NULL,
+    status VARCHAR(20),
+    UNIQUE(show_id, seat_number)
+);
+
+
+Then perform booking inside a transaction:
+BEGIN;
+
+INSERT INTO Booking
+(booking_id, show_id, seat_number, user_id, status)
+VALUES
+(101, 1, 'A10', 10, 'CONFIRMED');
+
+COMMIT;
+
+
+If User A inserts first, User B's insert fails because the unique constraint prevents duplicate booking.
+
+Important concepts:
+- Database transactions
+- ACID properties
+- Unique constraints
+- Race conditions
+- Pessimistic locking
+- Optimistic locking
+Interview answer:
+
+"I would handle this at the database level rather than relying only on frontend validation. I would use a unique constraint on show_id and seat_number and perform the booking inside a transaction. Even if two requests arrive simultaneously, the database ensures that only one booking succeeds."
+Q2. What happens if 10,000 users access your application simultaneously?
+Scenario: An online shopping application receives 10,000 concurrent requests.
+
+Solution:
+1. Load balancer distributes traffic across multiple application instances.
+2. Spring Boot handles requests using its web server thread pools.
+3. Redis caches frequently accessed data.
+4. Database connection pooling manages database connections.
+5. Database indexing improves query performance.
+6. Message queues handle asynchronous operations.
+
+
+
+
+
+
+
+medium.com
+
+
+Interview answer:
+
+"I would use horizontal scaling with multiple Spring Boot instances behind a load balancer. I would introduce Redis caching, database indexing, connection pooling and asynchronous processing using Kafka or RabbitMQ. I would also monitor response times, throughput and error rates."
+Q3. What if two users update the same bank account simultaneously?
+Scenario:
+
+Account balance = ₹10,000.
+- User A withdraws ₹5,000.
+- User B withdraws ₹7,000.
+Both requests read ₹10,000.
+
+Without concurrency control, incorrect balances or lost updates can occur.
+
+Solution: Optimistic or pessimistic locking.
+
+Optimistic locking using a version column:
+UPDATE Account
+SET balance = 5000,
+    version = version + 1
+WHERE id = 1
+AND version = 0;
+
+
+Only one transaction can update the row using version 0. The other transaction must retry or report a conflict.
+
+Interview concepts: Race condition, lost update, isolation, locking.
+Q4. What happens if a transaction fails halfway through a money transfer?
+Scenario:
+1. ₹1,000 deducted from Account A.
+2. Server crashes before adding ₹1,000 to Account B.
+Solution: Use database transactions and rollback.
+BEGIN;
+
+UPDATE Account
+SET balance = balance - 1000
+WHERE id = 1;
+
+UPDATE Account
+SET balance = balance + 1000
+WHERE id = 2;
+
+COMMIT;
+
+
+If an operation fails before commit, the transaction should roll back.
+Q5. How do you prevent duplicate payment if a user clicks Pay multiple times?
+Solution: Idempotency key.
+- Frontend generates a unique payment request ID.
+- Backend stores the request ID.
+- Repeated requests with the same ID return the original result instead of creating another payment.
+@PostMapping("/payment")
+public ResponseEntity<?> makePayment(
+        @RequestHeader("Idempotency-Key") String key) {
+
+    // Check whether this request was already processed.
+    // If yes, return the previous result.
+    // Otherwise process and save the payment.
+    return ResponseEntity.ok("Payment processed");
+}
+
+
+In production, use a database unique constraint on the idempotency key and coordinate payment state changes with the payment gateway.
+
+2. Core Java – Real-Time Scenarios
+Q6. What happens when multiple threads access the same variable?
+Scenario:
+
+100 threads increment the same counter.
+class Counter {
+    int count = 0;
+
+    void increment() {
+        count++;
+    }
+}
+
+
+Expected result = 100.
+
+Actual result might be less than 100 because count++ is not atomic.
+
+Solution 1: synchronized
+synchronized void increment() {
+    count++;
+}
+
+
+Solution 2: AtomicInteger
+AtomicInteger count = new AtomicInteger(0);
+
+count.incrementAndGet();
+
+
+Q7. Difference between synchronized and volatile?
+synchronized	volatile
+Provides mutual exclusion	Does not provide mutual exclusion
+Ensures visibility	Ensures visibility
+Supports atomic execution of protected blocks	Does not make compound operations atomic
+Uses monitor locking	Does not acquire a monitor lock
+
+Q8. What happens if two threads modify an ArrayList simultaneously?
+Problem: ArrayList is not thread-safe.
+
+Solutions:
+List<Integer> list =
+    Collections.synchronizedList(new ArrayList<>());
+
+
+Or:
+List<Integer> list = new CopyOnWriteArrayList<>();
+
+
+Choose based on workload. CopyOnWriteArrayList is particularly useful when reads are frequent and writes are relatively rare.
+Q9. How do you handle 100,000 tasks efficiently in Java?
+Solution: ExecutorService and thread pools.
+ExecutorService executor =
+    Executors.newFixedThreadPool(10);
+
+for (int i = 0; i < 1000; i++) {
+    executor.submit(() -> {
+        System.out.println(
+            Thread.currentThread().getName()
+        );
+    });
+}
+
+executor.shutdown();
+
+
+Instead of creating a new thread for every task, a thread pool reuses a controlled number of threads.
+Q10. What happens if HashMap receives two different keys with the same hashCode?
+Answer:
+
+A hash collision occurs.
+
+HashMap handles collisions using buckets. In modern Java implementations, heavily populated buckets can be converted into balanced trees under suitable conditions.
+
+equals() is used to distinguish keys that have the same hash code.
+Q11. When would you use HashMap versus ConcurrentHashMap?
+- HashMap: When the map is not shared across concurrent modifying threads.
+- ConcurrentHashMap: When multiple threads need concurrent access and updates.
+Q12. How do you avoid deadlocks in Java?
+Scenario: Thread A locks resource 1 and waits for resource 2, while Thread B locks resource 2 and waits for resource 1.
+
+Solutions:
+- Always acquire locks in a consistent order.
+- Avoid unnecessary nested locks.
+- Use tryLock() with timeouts when appropriate.
+- Keep critical sections small.
+
+3. OOP – Real-Time Scenarios
+Q13. Design a payment system supporting UPI, Credit Card and Net Banking.
+Question: How would you design this using OOP?
+
+Solution: Abstraction + Interface + Polymorphism.
+interface Payment {
+    void pay(double amount);
+}
+
+class UpiPayment implements Payment {
+    public void pay(double amount) {
+        System.out.println("UPI payment: " + amount);
+    }
+}
+
+class CardPayment implements Payment {
+    public void pay(double amount) {
+        System.out.println("Card payment: " + amount);
+    }
+}
+
+class PaymentService {
+    public void process(Payment payment,
+                        double amount) {
+        payment.pay(amount);
+    }
+}
+
+
+Usage:
+PaymentService service = new PaymentService();
+
+service.process(new UpiPayment(), 1000);
+service.process(new CardPayment(), 2000);
+
+
+Concepts tested:
+- Interface
+- Abstraction
+- Polymorphism
+- Loose coupling
+- Open/Closed Principle
+Q14. Why do we use encapsulation in a banking application?
+We should not allow external classes to directly modify account balance.
+class BankAccount {
+
+    private double balance;
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+        }
+    }
+}
+
+
+The balance is private and can only be modified through controlled methods.
+Q15. When would you use inheritance versus composition?
+Scenario: An e-commerce application has different types of users.
+
+Inheritance:
+class User {
+    String name;
+}
+
+class Admin extends User {
+}
+
+class Customer extends User {
+}
+
+
+Composition:
+class Car {
+    private Engine engine;
+}
+
+
+- Inheritance represents an IS-A relationship.
+- Composition represents a HAS-A relationship.
+Prefer composition when behavior should be flexible and independently replaceable.
+Q16. How would you design a parking lot using OOP?
+Expected classes:
+- ParkingLot
+- ParkingFloor
+- ParkingSlot
+- Vehicle
+- Car
+- Bike
+- Ticket
+- Payment
+You should use abstraction for Vehicle and polymorphism for different vehicle types.
+Q17. Why is interface-based programming useful in real applications?
+Because it reduces coupling and allows implementations to change without changing the dependent business logic.
+
+For example, a notification service can support Email, SMS and WhatsApp using a common interface.
+
+4. Spring Boot – Real-Time Scenarios
+These questions are particularly important for Java backend developer interviews.
+Q18. How do you handle 10,000 simultaneous requests in Spring Boot?
+Scenario: Your application suddenly receives heavy traffic during a flash sale.
+
+Solution:
+
+
+
+
+
+
+
+dev.to
+
+
+Use:
+1. Multiple Spring Boot instances.
+2. Load balancer such as Nginx.
+3. Redis for caching.
+4. HikariCP for database connection pooling.
+5. Kafka or RabbitMQ for asynchronous tasks.
+6. Rate limiting to prevent abuse.
+7. Monitoring using Prometheus and Grafana.
+Interview answer:
+
+"I would make the application horizontally scalable by running multiple Spring Boot instances behind a load balancer. I would use Redis for frequently accessed data, HikariCP for connection pooling and Kafka for asynchronous processing. I would also monitor system performance and database bottlenecks."
+Q19. How do you prevent two users from booking the same seat using Spring Boot?
+Solution: Transaction + pessimistic locking + unique constraint.
+
+Repository:
+public interface SeatRepository
+        extends JpaRepository<Seat, Long> {
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT s FROM Seat s WHERE s.id = :id")
+    Optional<Seat> findByIdForUpdate(Long id);
+}
+
+
+Service:
+@Service
+public class BookingService {
+
+    @Autowired
+    private SeatRepository seatRepository;
+
+    @Transactional
+    public String bookSeat(Long seatId) {
+
+        Seat seat = seatRepository
+            .findByIdForUpdate(seatId)
+            .orElseThrow();
+
+        if (seat.isBooked()) {
+            throw new RuntimeException(
+                "Seat already booked"
+            );
+        }
+
+        seat.setBooked(true);
+
+        seatRepository.save(seat);
+
+        return "Booking successful";
+    }
+}
+
+
+How it works:
+1. User A requests seat A10.
+2. Database locks the seat row.
+3. User B requests the same seat and waits.
+4. User A books and commits.
+5. User B gets the updated state and sees that the seat is booked.
+Also add a database unique constraint for the show and seat combination as a final safeguard.
+Q20. What is the purpose of @Transactional in Spring Boot?
+@Transactional manages database transactions automatically.
+
+Example:
+@Transactional
+public void transferMoney() {
+
+    accountRepository.withdraw(1000);
+
+    accountRepository.deposit(1000);
+}
+
+
+If an unchecked exception occurs, Spring normally rolls back the transaction.
+
+Important interview points:
+- Commit
+- Rollback
+- Propagation
+- Isolation
+- Read-only transactions
+- Rollback rules
+Note: Spring's default proxy-based transaction management does not automatically intercept self-invocation within the same object.
+Q21. What happens if one microservice is down?
+Scenario: Your application has:
+- User Service
+- Order Service
+- Payment Service
+The Payment Service suddenly becomes unavailable.
+
+Solution:
+- Circuit Breaker
+- Retry with backoff
+- Timeout
+- Fallback response
+- Message queue for asynchronous processing
+Example using Resilience4j:
+@CircuitBreaker(
+    name = "paymentService",
+    fallbackMethod = "paymentFallback"
+)
+public String makePayment() {
+    return paymentClient.processPayment();
+}
+
+public String paymentFallback(
+        Exception exception) {
+    return "Payment service temporarily unavailable";
+}
+
+
+Interview answer:
+
+"I would implement a circuit breaker to prevent repeated calls to an unhealthy service. I would also configure timeouts, controlled retries and fallback mechanisms."
+Q22. How do you handle exceptions globally in Spring Boot?
+Use @RestControllerAdvice and @ExceptionHandler.
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(
+        ResourceNotFoundException.class
+    )
+    public ResponseEntity<String> handleNotFound(
+            ResourceNotFoundException ex) {
+
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(ex.getMessage());
+    }
+}
+
+
+This avoids writing exception-handling logic in every controller.
+Q23. How do you secure REST APIs in Spring Boot?
+Use Spring Security and JWT authentication.
+
+Typical flow:
+
+
+
+
+
+
+
+bezkoder.com
+
+
+1. User submits username and password.
+2. Backend authenticates credentials.
+3. Backend issues an access token.
+4. Client sends the token in the Authorization header.
+5. JWT filter validates the token.
+6. Spring Security checks authorization.
+7. Backend returns the requested resource.
+Example header:
+Authorization: Bearer <JWT_TOKEN>
+
+
+Q24. What happens if the database connection pool is exhausted?
+Scenario: All database connections are busy, and new requests cannot get a connection.
+
+Solution:
+- Configure HikariCP properly.
+- Set connection timeout.
+- Close connections automatically using try-with-resources or framework-managed transactions.
+- Optimize slow queries.
+- Avoid holding transactions open during external API calls.
+- Monitor active and idle connections.
+Example:
+spring.datasource.hikari.maximum-pool-size=20
+spring.datasource.hikari.minimum-idle=5
+spring.datasource.hikari.connection-timeout=30000
+
+
+Do not blindly increase the pool size; consider the database's total connection capacity.
+Q25. How do you prevent duplicate records when a user submits a form multiple times?
+Solution:
+- Frontend button disabling for better UX.
+- Backend idempotency.
+- Database unique constraints.
+- Transaction management.
+Never depend only on disabling the frontend button because duplicate HTTP requests can still reach the backend.
+Q26. How do you improve a slow Spring Boot API?
+I would investigate in this order:
+1. Measure API response time.
+2. Identify slow database queries.
+3. Add appropriate indexes.
+4. Avoid unnecessary joins and N+1 queries.
+5. Implement caching.
+6. Use pagination.
+7. Optimize external API calls.
+8. Profile CPU and memory usage.
+Q27. What is the N+1 query problem in Hibernate?
+Suppose you fetch 100 employees and access their department individually.
+
+Hibernate may execute:
+- 1 query to fetch employees.
+- 100 additional queries to fetch departments.
+Total = 101 queries.
+
+Solutions:
+- JOIN FETCH
+- Entity graphs
+- DTO projections
+- Appropriate batch fetching
+Example:
+@Query("""
+    SELECT e FROM Employee e
+    JOIN FETCH e.department
+    """)
+List<Employee> findAllWithDepartment();
+
+
+Q28. How do you handle file uploads of large files?
+Solution:
+- Multipart file upload.
+- File size validation.
+- Stream large files instead of loading everything into memory.
+- Store files in object storage or a dedicated file server.
+- Store file metadata in the database.
+- Configure request size limits.
+Q29. How do you handle API versioning?
+Example:
+@GetMapping("/api/v1/students")
+public List<Student> getStudentsV1() {
+    return studentService.getStudents();
+}
+
+@GetMapping("/api/v2/students")
+public List<Student> getStudentsV2() {
+    return studentService.getStudents();
+}
+
+
+API versioning helps maintain backward compatibility when APIs evolve.
+Q30. How do you handle multiple requests when updating inventory?
+Scenario:
+
+An online shop has only one item remaining.
+
+Two users click Buy simultaneously.
+
+Solution: Atomic database update.
+UPDATE Product
+SET stock = stock - 1
+WHERE id = 101
+AND stock > 0;
+
+
+Then check the number of affected rows:
+- 1 row updated: Inventory reserved.
+- 0 rows updated: Out of stock.
+This prevents the stock from becoming negative.
+
+5. Microservices – Production-Level Scenarios
+Q31. How do two microservices communicate with each other?
+Two major approaches:
+Synchronous	Asynchronous
+REST API	Kafka
+OpenFeign	RabbitMQ
+HTTP communication	Event-based communication
+Caller waits for response	Caller need not wait
+
+Example:
+
+Order Service → Payment Service using REST API.
+
+Order Service → Notification Service using Kafka events.
+Q32. What happens if payment succeeds but Order Service fails?
+This is a distributed transaction problem.
+
+Solution: Saga Pattern.
+
+Example:
+1. Create order.
+2. Process payment.
+3. If payment succeeds, confirm order.
+4. If a later operation fails, initiate a compensating action, such as refunding the payment.
+Saga coordinates a series of local transactions and compensating actions rather than relying on one database transaction across all services.
+Q33. How do you prevent duplicate Kafka messages from processing twice?
+Solution:
+- Use an event ID.
+- Maintain an idempotency record.
+- Enforce uniqueness in the database.
+- Use appropriate Kafka consumer offset management.
+Kafka delivery and application-level database updates must be designed together; simply enabling retries does not guarantee exactly-once business effects.
+Q34. How do you manage configuration across multiple microservices?
+Use centralized configuration management.
+
+For example:
+- Spring Cloud Config
+- Environment variables
+- Kubernetes ConfigMaps and Secrets
+Each service should have its own configuration and secrets should not be hardcoded.
+Q35. How do you trace a request across multiple microservices?
+Use distributed tracing.
+
+Tools:
+- OpenTelemetry
+- Zipkin
+- Jaeger
+- Micrometer Tracing
+A trace ID is propagated between services to identify the complete request flow.
+
+6. Most Challenging Combined Interview Scenarios
+These questions combine OOP, DBMS, Java and Spring Boot. They are excellent for checking real backend engineering knowledge.
+No.	Interview scenario	Concepts tested
+36	Design an online railway reservation system	OOP, DBMS, Spring Boot
+37	Design an e-commerce application supporting 1 lakh users	Java, Redis, Microservices
+38	Two users transfer money from the same bank account	Transactions, locking, concurrency
+39	Payment succeeds but the user receives a failure response	Idempotency, transactions, recovery
+40	Server crashes while processing an order	ACID, Kafka, Saga
+41	Database has 10 million records. How do you retrieve data faster?	Indexing, pagination, query optimization
+42	How do you prevent unauthorized access to another user's data?	Spring Security, JWT, authorization
+43	How do you handle 1 million notification requests?	Multithreading, Kafka, asynchronous processing
+44	What if Redis goes down?	Cache fallback, resilience
+45	How do you ensure data consistency across microservices?	Saga, eventual consistency, events
+
+7. One Complete Real-Time System Design Interview
+Question: Design a Movie Ticket Booking System like BookMyShow.
+
+
+
+
+
+
+
+medium.com
+
+
+Interviewer: How would you design a movie ticket booking application?
+
+Your answer should cover these components:
+Component	Responsibility	Technology
+User Service	User registration and login	Spring Security
+Movie Service	Movie and theatre details	Spring Boot
+Seat Service	Seat availability	PostgreSQL, Redis
+Booking Service	Booking management	Spring Boot
+Payment Service	Payment processing	Payment Gateway
+Notification Service	SMS and email	Kafka
+Database	Persistent storage	PostgreSQL
+Cache	Fast seat and movie lookups	Redis
+
+Interviewer: What if two users select the same seat?
+
+Answer: Database unique constraints and locking.
+
+Interviewer: What if 50,000 users access the application?
+
+Answer: Load balancing, horizontal scaling, Redis, connection pooling and asynchronous processing.
+
+Interviewer: What if payment succeeds but booking fails?
+
+Answer: Saga Pattern and compensating transactions, including refund initiation.
+
+Interviewer: What if a user clicks the Book button five times?
+
+Answer: Idempotency key and database uniqueness constraints.
+
+Interviewer: What if the database crashes?
+
+Answer: Database backups, replication, recovery procedures and appropriate transaction durability.
+
+Interviewer: How do you prevent unauthorized users from accessing bookings?
+
+Answer: Spring Security, JWT authentication and ownership-based authorization.
