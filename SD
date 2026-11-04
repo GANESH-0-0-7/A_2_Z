@@ -1,0 +1,613 @@
+Top 30 System Design Interview Questions with Real-Life Scenarios and Answers
+System Design is one of the most important topics in software engineering interviews, especially for Java, Spring Boot, Microservices and Full Stack Developer roles.
+
+Interviewers don't just ask definitions. They give you real-world problems and expect you to explain how you would design a scalable, reliable system.
+
+Let's learn using practical scenarios similar to Amazon, Swiggy, BookMyShow, Instagram, WhatsApp and banking applications.
+1. Basic System Design Questions
+Q1. How would you design a URL Shortener like Bitly?
+Frequently asked
+Scenario: A user enters a long URL:
+
+https://example.com/products/electronics/mobile
+
+Your system generates:
+
+https://short.ly/aB123
+
+How would you design it?
+
+Answer:
+1. User sends a long URL to the backend.
+2. Backend generates a unique short code.
+3. Store the mapping in a database.
+4. Return the shortened URL.
+5. When someone visits the short URL, retrieve the original URL and redirect.
+Architecture:
+Client / Browser
+
+
+API Gateway / Spring Boot
+
+
+Short Code Generator
+
+
+Redis Cache + PostgreSQL
+
+
+Technologies: Java, Spring Boot, PostgreSQL, Redis.
+
+Follow-up: What if 10 million users access the same shortened URL?
+
+Answer: Use Redis caching, load balancing, horizontal scaling and database read replicas.
+Q2. How would you design an online shopping application like Amazon?
+Scenario: Millions of users browse products, add products to carts and place orders simultaneously.
+
+Answer:
+
+Divide the application into services:
+- User Service – authentication and profiles.
+- Product Service – product information.
+- Cart Service – shopping cart.
+- Order Service – order processing.
+- Payment Service – payment handling.
+- Inventory Service – stock management.
+- Notification Service – email/SMS notifications.
+
+
+
+
+
+
+
+medium.com
+
+
+Important concepts:
+- Microservices architecture.
+- API Gateway.
+- Redis caching.
+- Kafka/RabbitMQ.
+- Database per service.
+- Load balancing.
+Q3. How would you design a food delivery application like Swiggy?
+Scenario: A customer places an order, a restaurant prepares it, and a delivery partner delivers it.
+
+Answer:
+1. Customer selects food.
+2. Order Service creates an order.
+3. Restaurant receives the order.
+4. Payment Service processes payment.
+5. Delivery Service assigns a delivery partner.
+6. Tracking Service updates delivery location.
+7. Notification Service sends status updates.
+Important challenge: How do you track the delivery partner in real time?
+
+Use WebSockets or location updates through APIs, with Redis for frequently accessed location data.
+Q4. How would you design Instagram?
+Scenario: Millions of users upload photos, watch reels, like posts and follow others.
+
+Answer:
+- User Service – profiles and authentication.
+- Post Service – posts and captions.
+- Media Service – image/video uploads.
+- Feed Service – personalized feed.
+- Like and Comment Services.
+- Notification Service.
+Store media in object storage such as Amazon S3 and use a CDN to deliver images and videos quickly.
+Q5. How would you design WhatsApp?
+Scenario: Two users should exchange messages instantly, even when millions of users are online.
+
+Answer:
+- WebSocket connections for real-time communication.
+- Message Service to process messages.
+- Message database for persistence.
+- Redis for online user/session information.
+- Kafka for asynchronous message processing.
+- Push notifications for offline users.
+Important features:
+- Message delivery status.
+- Read receipts.
+- End-to-end encryption.
+- Offline message delivery.
+
+2. Database and Concurrency Real-Life Questions
+These are especially important for Java and Spring Boot interviews.
+Q6. Two users try to book the same movie seat simultaneously. How do you prevent double booking?
+Very important interview question
+Scenario:
+
+Movie: Avengers
+
+Seat: A10
+- User A selects seat A10.
+- User B selects seat A10.
+- Both click Book at almost exactly the same time.
+How do you ensure only one user gets the seat?
+
+Answer:
+
+Use database transactions and concurrency control.
+
+Example PostgreSQL table:
+CREATE TABLE seats (
+    seat_id BIGINT PRIMARY KEY,
+    seat_number VARCHAR(10),
+    status VARCHAR(20)
+);
+
+
+Use an atomic conditional update:
+UPDATE seats
+SET status = 'BOOKED'
+WHERE seat_id = 10
+AND status = 'AVAILABLE';
+
+
+Check the number of affected rows:
+- 1 row updated → Booking successful.
+- 0 rows updated → Seat already booked.
+Use @Transactional in Spring Boot to manage the transaction.
+
+Why is this effective?
+
+The database ensures that only one transaction can successfully change the seat from AVAILABLE to BOOKED.
+Q7. What happens if 10,000 users access your website simultaneously?
+Answer:
+
+Use:
+1. Load balancer to distribute traffic.
+2. Multiple application instances.
+3. Redis caching.
+4. Database connection pooling.
+5. Horizontal scaling.
+6. Message queues for background tasks.
+
+
+
+
+
+
+
+wolf-tech.io
+
+
+Q8. What happens if two users update the same bank account simultaneously?
+Scenario:
+
+Account balance = ₹10,000.
+- User A withdraws ₹6,000.
+- User B withdraws ₹5,000.
+Both requests arrive simultaneously.
+
+Answer:
+
+Use database transactions, row-level locking and an atomic balance update.
+BEGIN;
+
+UPDATE accounts
+SET balance = balance - 6000
+WHERE account_id = 101
+AND balance >= 6000;
+
+COMMIT;
+
+
+Check affected rows and handle insufficient balance.
+
+For financial applications, use appropriate isolation, locking and transaction design to prevent lost updates and overdrafts.
+Q9. What is database indexing? Why is it important?
+Scenario: Your application has 10 million users. Searching by email takes several seconds.
+
+Without an index, the database may scan many rows.
+CREATE INDEX idx_user_email
+ON users(email);
+
+
+Now the database can locate matching email records much faster in typical workloads.
+
+Follow-up: Does adding too many indexes improve performance?
+
+No. Indexes consume storage and slow down INSERT, UPDATE and DELETE operations.
+Q10. SQL vs NoSQL: When would you choose each?
+SQL	NoSQL
+Structured data	Flexible data models
+Relational tables	Document/key-value models
+Strong transactions	Varies by database
+Complex joins	Often optimized for specific access patterns
+PostgreSQL, MySQL	MongoDB, Cassandra
+
+Real-life examples:
+- Banking transactions → PostgreSQL.
+- Product catalogue → PostgreSQL or MongoDB depending on requirements.
+- Session caching → Redis.
+- Large-scale event storage → Cassandra or another distributed database.
+
+3. Microservices and Backend System Design
+Q11. How do two microservices communicate with each other?
+Scenario: In an e-commerce application, Order Service needs information from Payment Service.
+
+Answer: Two approaches
+
+1. Synchronous communication
+- REST API using HTTP.
+- OpenFeign Client.
+- WebClient.
+Example:
+@FeignClient(name = "payment-service")
+public interface PaymentClient {
+
+    @PostMapping("/payments")
+    String makePayment();
+}
+
+
+2. Asynchronous communication
+- Apache Kafka.
+- RabbitMQ.
+Example:
+
+Order Service publishes an OrderCreated event. Payment Service consumes it independently.
+
+When to use what?
+REST	Kafka
+Immediate response required	Background processing
+Request-response	Event-driven
+Direct communication	Loosely coupled
+
+Q12. What happens if one microservice goes down?
+Scenario: Payment Service is unavailable, but customers are still placing orders.
+
+Answer:
+
+Implement the Circuit Breaker pattern.
+
+Three states:
+CLOSED
+Requests are allowed
+
+Normal operation
+
+
+OPEN
+Requests are temporarily blocked
+
+Service is failing
+
+
+HALF-OPEN
+Test requests are allowed
+
+Checking recovery
+
+
+Use Resilience4j with Spring Boot.
+Q13. How do you ensure data consistency between multiple microservices?
+Scenario: An order is created, but payment fails.
+
+Should the order remain confirmed?
+
+Answer:
+
+Use the Saga Pattern.
+
+Example:
+1. Order Service creates a pending order.
+2. Payment Service processes payment.
+3. Inventory Service reserves stock.
+4. Order Service confirms the order.
+If payment fails, execute a compensating transaction to cancel the pending order.
+
+This is useful because independent microservices generally cannot share one normal database transaction.
+Q14. How would you handle millions of requests per second?
+Answer:
+
+Use a combination of:
+- Load balancers.
+- Horizontal scaling.
+- CDN.
+- Redis caching.
+- Database sharding and replication.
+- Kafka for asynchronous workloads.
+- Rate limiting.
+- Efficient database queries.
+Follow-up: What is horizontal scaling?
+
+Adding more application servers instead of increasing the power of one server.
+Q15. What is API Gateway? Why do we need it?
+Scenario: Your application has 10 microservices. Should React directly communicate with all 10 services?
+
+Not necessarily.
+
+An API Gateway provides a single entry point.
+
+
+
+
+
+
+
+bigohtech.com
+
+
+Responsibilities:
+- Request routing.
+- Authentication.
+- Rate limiting.
+- Logging.
+- Load balancing integration.
+- Request filtering.
+Examples: Spring Cloud Gateway, Kong, NGINX.
+Q16. What happens if Kafka is down?
+Scenario: Customers are placing orders, but Kafka is temporarily unavailable.
+
+Answer:
+- Retry publishing messages.
+- Use persistent message storage.
+- Implement the Transactional Outbox Pattern.
+- Monitor consumer lag.
+- Avoid losing important business events.
+- Recover and replay messages where appropriate.
+The Outbox Pattern stores the business change and event in the same database transaction. A separate publisher sends the event to Kafka.
+Q17. How would you prevent duplicate payment processing?
+Scenario: A customer clicks Pay twice, or the payment provider retries the same request.
+
+Answer:
+
+Use an Idempotency Key.
+
+Example:
+POST /payments
+Idempotency-Key: payment-12345
+
+
+The backend stores the key and payment result.
+
+If the same request arrives again, return the previous result instead of charging again.
+
+Also use database uniqueness constraints and payment-provider transaction references.
+
+4. Real-Life Application Design Questions
+Q18. Design a notification system like Gmail or WhatsApp.
+Requirements:
+- Send notifications to millions of users.
+- Support email, SMS and push notifications.
+- Handle failed notifications.
+Answer:
+
+Architecture:
+
+
+
+
+
+
+
+prachub.com
+
+
+1. Application generates a notification event.
+2. Kafka receives the event.
+3. Notification workers consume it.
+4. Workers send email, SMS or push notifications.
+5. Failed notifications are retried.
+6. Permanently failed messages can go to a Dead Letter Queue.
+Q19. Design a parking lot management system.
+Scenario: A shopping mall has 1,000 parking spaces.
+
+Requirements:
+- Track available spaces.
+- Assign parking slots.
+- Calculate parking fees.
+- Prevent two cars from receiving the same slot.
+Answer:
+
+Main classes:
+- ParkingLot.
+- ParkingFloor.
+- ParkingSlot.
+- Vehicle.
+- Ticket.
+- Payment.
+Database tables:
+Vehicle
+ParkingSlot
+ParkingTicket
+Payment
+
+
+Use a database transaction and atomic slot allocation to avoid duplicate assignments.
+
+This question tests both Low-Level Design (OOP) and database design.
+Q20. Design a ride-booking application like Uber.
+Scenario: A customer requests a ride. The system should find the nearest available driver.
+
+Answer:
+
+Main services:
+- User Service.
+- Driver Service.
+- Location Service.
+- Matching Service.
+- Ride Service.
+- Payment Service.
+Technologies:
+- Redis Geospatial for nearby driver lookup.
+- WebSockets for live updates.
+- Kafka for asynchronous events.
+- PostgreSQL/PostGIS for persistent geographic data.
+Important challenge: What if two customers request the same driver?
+
+Use atomic driver assignment with a conditional database update or distributed coordination.
+Q21. Design an online examination system.
+Scenario: 100,000 students start an examination at exactly 10 AM.
+
+Answer:
+
+Important components:
+- Authentication Service.
+- Question Service.
+- Exam Service.
+- Submission Service.
+- Result Service.
+Challenges and solutions:
+Problem	Solution
+High traffic	Load balancing
+Exam submission failure	Autosave and durable storage
+Duplicate submissions	Idempotency
+Database overload	Caching and scaling
+Server failure	Replication and recovery
+
+Q22. Design a file storage system like Google Drive.
+Requirements:
+- Upload files.
+- Download files.
+- Share files.
+- Maintain version history.
+Answer:
+
+Use:
+- Spring Boot for backend APIs.
+- Object storage for file contents.
+- PostgreSQL for file metadata.
+- Redis for caching.
+- CDN for fast downloads.
+Important: Store file metadata and file contents separately. Avoid storing large files directly in ordinary relational database columns unless there is a specific reason.
+Q23. Design a video streaming platform like YouTube.
+Scenario: Millions of people watch videos simultaneously.
+
+Answer:
+1. User uploads a video.
+2. Video is stored in object storage.
+3. Video processing workers encode it into multiple resolutions.
+4. CDN distributes video content.
+5. Streaming uses adaptive bitrate technology.
+Important technologies:
+- Object Storage.
+- CDN.
+- Kafka.
+- Video transcoding.
+- HLS/DASH.
+
+5. Advanced System Design Interview Questions
+Q24. What is caching? How would you use Redis?
+Scenario: Your application receives 1 million product requests per day. Every request queries PostgreSQL.
+
+Repeated database queries increase database load.
+
+Answer:
+
+Use Redis caching.
+User Request
+
+
+Check Redis
+
+Cache Hit
+Return cached data
+
+
+Cache Miss
+Query PostgreSQL
+
+
+
+
+Example:
+@Cacheable(value = "products", key = "#id")
+public Product getProduct(Long id) {
+    return repository.findById(id)
+        .orElseThrow();
+}
+
+
+Q25. What is database sharding?
+Scenario: Your application has 100 million users. A single database server struggles with the workload.
+
+Answer:
+
+Divide the database into multiple smaller databases called shards.
+
+Example:
+Shard	User IDs
+Shard 1	1–1 million
+Shard 2	1–2 million
+Shard 3	2–3 million
+
+Each shard stores a subset of the data.
+
+Benefits:
+- Distributes database workload.
+- Improves scalability.
+- Supports large datasets.
+Q26. What is the difference between replication and sharding?
+Replication	Sharding
+Copies the same data	Splits data
+Improves availability and read scaling	Improves data distribution and capacity
+Primary and replicas	Multiple data partitions
+Example: Read replicas	Example: User ID-based partitioning
+
+Q27. How would you implement rate limiting?
+Scenario: A user sends 10,000 API requests in one minute.
+
+You want to restrict the user to 100 requests per minute.
+
+Answer:
+
+Use rate limiting algorithms:
+- Token Bucket.
+- Leaky Bucket.
+- Fixed Window.
+- Sliding Window.
+Example:
+User ID: 101
+Limit: 100 requests/minute
+
+Requests: 100 → Allowed
+Requests: 101 → Rejected (HTTP 429)
+
+
+Redis can maintain distributed rate-limit counters across multiple backend instances.
+Q28. What is CAP Theorem?
+Scenario: Your distributed database has a network partition.
+
+CAP stands for:
+- Consistency: Every read gets the latest successful write.
+- Availability: Every request to a functioning node receives a response.
+- Partition Tolerance: System continues operating despite network communication failures.
+During a network partition, a distributed system must make a trade-off between consistency and availability.
+
+Interview tip: Don't simply say a database is always CA, CP or AP. Explain its behavior during a partition and the guarantees offered by its particular configuration.
+Q29. How would you design a system that never loses an order?
+Scenario: A customer places an order, but the server crashes immediately afterward.
+
+Answer:
+
+Use:
+1. Database transactions.
+2. Durable database storage.
+3. Transactional Outbox Pattern.
+4. Message broker persistence.
+5. Retry mechanisms.
+6. Idempotent consumers.
+7. Database backups and recovery.
+Important: No system can honestly guarantee zero data loss under every possible failure without specifying its durability and recovery assumptions.
+Q30. How would you design a system for Black Friday traffic?
+Scenario: An e-commerce platform normally receives 10,000 requests per minute, but during a sale it receives 1 million requests per minute.
+
+Answer:
+
+I would implement:
+1. Horizontal autoscaling.
+2. CDN for static content.
+3. Redis for frequently accessed products.
+4. Load balancing.
+5. Kafka for asynchronous order processing.
+6. Database read replicas.
+7. Rate limiting.
+8. Queue-based traffic management.
+9. Monitoring and alerting.
+Special challenge: Prevent overselling when thousands of customers purchase the last 100 products.
+
+Use atomic inventory reservation, database transactions, appropriate locking or conditional updates, and idempotent order processing.
