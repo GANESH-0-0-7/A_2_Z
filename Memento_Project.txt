@@ -1,0 +1,373 @@
+Memento Project – 60 Technical Interview Questions with Answers
+These questions are based on your Memento project: Java, Spring Boot, React, PostgreSQL, pgvector, Spring AI, Ollama, RAG, JWT and SSE.
+
+I've arranged them from basic to advanced so you can prepare for Java Full Stack developer interviews.
+Section 1: Project-based questions
+1. What is Memento?
+
+Memento is an AI-powered document knowledge management system. It allows users to upload documents such as PDF, DOCX and TXT, ask questions about their contents and receive AI-generated answers with source citations.
+
+2. What problem does your project solve?
+
+It reduces the time required to search through large documents. Instead of manually reading every page, users can ask questions and get relevant answers from their uploaded documents.
+
+3. What is the technology stack used?
+- Frontend: React 19, TypeScript, Tailwind CSS.
+- Backend: Java 21, Spring Boot 3.
+- Database: PostgreSQL.
+- Vector search: pgvector.
+- AI integration: Spring AI.
+- AI models: Qwen 2.5 3B and Nomic Embed Text.
+- State management: Zustand.
+- Build tools: Maven and Vite.
+4. Explain the architecture of Memento.
+
+Memento follows a layered full-stack architecture.
+1. React handles the user interface.
+2. Spring Boot handles REST APIs and business logic.
+3. PostgreSQL stores application data.
+4. pgvector performs vector similarity search.
+5. Spring AI integrates AI models.
+6. Ollama runs AI models locally.
+5. Explain the complete working flow of Memento.
+1. User logs in.
+2. User uploads a document.
+3. Backend extracts the document text.
+4. Text is divided into chunks.
+5. Embeddings are generated.
+6. Embeddings are stored in pgvector.
+7. User asks a question.
+8. The question is converted into an embedding.
+9. Similar document chunks are retrieved.
+10. The AI model generates an answer using the retrieved content.
+6. Why did you choose Spring Boot?
+
+Spring Boot simplifies backend development through dependency injection, auto-configuration, REST API support, database integration and security support.
+
+7. Why did you choose React?
+
+React provides reusable components, efficient UI updates, hooks and a component-based architecture.
+
+8. Why PostgreSQL instead of MySQL?
+
+PostgreSQL provides strong relational database features and supports the pgvector extension, which allows us to perform vector similarity searches in the same database.
+
+9. What are the main features of Memento?
+- Document upload and processing.
+- AI-powered document chat.
+- Semantic search.
+- Source citations.
+- User authentication.
+- Chat sessions.
+- Streaming AI responses.
+10. What was the most challenging part of this project?
+
+A strong answer:
+
+"The most challenging part was implementing the RAG pipeline. I needed to understand document extraction, text chunking, embedding generation, vector storage and semantic retrieval. Integrating these components with Spring AI and Ollama was an important technical challenge."
+
+Section 2: Java and Spring Boot
+11. What is Spring Boot?
+
+Spring Boot is a Java framework used to develop standalone, production-ready applications with minimal configuration.
+
+12. What is dependency injection?
+
+Dependency Injection is a design pattern in which an object's dependencies are provided by the Spring container rather than created manually.
+
+Example:
+@Service
+public class DocumentService {
+    public void process() {
+        System.out.println("Processing document");
+    }
+}
+
+
+@RestController
+public class DocumentController {
+
+    private final DocumentService service;
+
+    public DocumentController(DocumentService service) {
+        this.service = service;
+    }
+}
+
+
+Here, Spring injects DocumentService into DocumentController.
+
+13. What is the difference between @Component, @Service and @Repository?
+Annotation	Purpose
+@Component	General Spring-managed bean
+@Service	Business logic layer
+@Repository	Database access layer
+
+14. What is @RestController?
+
+It is used to create REST APIs. It combines @Controller and @ResponseBody.
+
+15. What is the difference between @Controller and @RestController?
+- @Controller generally returns views.
+- @RestController returns data such as JSON directly in the response body.
+16. What is Spring Data JPA?
+
+Spring Data JPA simplifies database operations by providing repository interfaces without requiring us to write common SQL queries manually.
+
+17. What is Hibernate?
+
+Hibernate is an ORM framework that maps Java objects to relational database tables.
+
+18. What is an Entity?
+
+An Entity is a Java class mapped to a database table using @Entity.
+
+19. What is a DTO?
+
+DTO stands for Data Transfer Object. It transfers data between application layers without exposing internal entity structures directly.
+
+20. What is the difference between GET, POST, PUT and DELETE?
+HTTP method	Purpose
+GET	Retrieve data
+POST	Create data
+PUT	Replace or update a resource
+DELETE	Delete a resource
+
+
+Section 3: RAG and Artificial Intelligence
+Very important for Memento
+21. What is Artificial Intelligence?
+
+AI is a field of computer science that enables machines to perform tasks that typically require human intelligence, such as understanding language, recognizing patterns and making decisions.
+
+22. What is an LLM?
+
+LLM stands for Large Language Model. It is an AI model trained on large amounts of text to understand and generate human language.
+
+Example: Qwen.
+
+23. What is RAG?
+
+RAG stands for Retrieval-Augmented Generation.
+
+It combines information retrieval with AI text generation. The system retrieves relevant information from an external knowledge source and provides it to an LLM to generate a context-aware answer.
+
+24. Why did you use RAG instead of directly using an LLM?
+
+An LLM may not know the contents of a user's private documents. RAG retrieves relevant information from those documents and provides it as context, allowing the model to answer document-specific questions.
+
+25. What is an embedding?
+
+An embedding is a numerical representation of text in vector form.
+
+For example:
+"Java is a programming language"
+             |
+             v
+       Embedding Model
+             |
+             v
+[0.21, 0.45, 0.78, 0.12, ...]
+
+
+Similar meanings generally produce vectors that are close in vector space.
+
+26. What is semantic search?
+
+Semantic search finds information based on meaning rather than only matching exact keywords.
+
+For example:
+
+Question: "How does Java manage memory?"
+
+A semantic search can retrieve content about JVM garbage collection even if the exact question words are absent.
+
+27. What is chunking?
+
+Chunking means splitting a large document into smaller text sections.
+
+Example:
+100-page PDF
+      |
+      v
+Text extraction
+      |
+      v
+Chunk 1
+Chunk 2
+Chunk 3
+Chunk 4
+      |
+      v
+Embedding generation
+
+
+It makes document retrieval more efficient and provides focused context to the LLM.
+
+28. What is the difference between an embedding model and a generative model?
+Embedding model	Generative model
+Converts text into vectors	Generates text
+Used for semantic search	Used for answering questions
+Nomic Embed Text	Qwen 2.5 3B
+
+29. What is hallucination in AI?
+
+Hallucination occurs when an AI model generates incorrect or fabricated information while presenting it as factual.
+
+RAG can help reduce hallucination by providing relevant document context, but it cannot guarantee that every answer is correct.
+
+30. What is prompt engineering?
+
+Prompt engineering is the process of designing instructions and context to guide an AI model toward producing useful and accurate responses.
+
+31. What is Ollama?
+
+Ollama is a tool that allows developers to download and run supported AI models locally.
+
+32. What is Spring AI?
+
+Spring AI is a Java framework that provides abstractions for integrating AI models, embedding models, vector stores and retrieval workflows into Spring applications.
+
+33. What is the difference between RAG and fine-tuning?
+RAG	Fine-tuning
+Retrieves external information	Changes model behavior through additional training
+Knowledge can be updated by changing documents	Requires additional training
+Useful for document-based Q&A	Useful for adapting model behavior or task patterns
+
+34. What is top-K retrieval?
+
+Top-K retrieval selects the K most relevant document chunks for a particular question.
+
+For example, if K = 5, the system retrieves the five most similar chunks.
+
+35. What is cosine similarity?
+
+Cosine similarity measures the similarity between two vectors based on the angle between them.
+\[
+\text{Cosine Similarity} =
+\frac{A \cdot B}{\|A\|\|B\|}
+\]
+
+A value closer to 1 generally indicates greater directional similarity.
+
+Section 4: PostgreSQL and pgvector
+36. What is PostgreSQL?
+
+PostgreSQL is an open-source relational database management system used to store structured application data.
+
+37. What is pgvector?
+
+pgvector is a PostgreSQL extension that enables storing vector embeddings and performing similarity searches.
+
+38. Why did you use pgvector?
+
+I used pgvector to store document embeddings and retrieve semantically similar chunks. It also allows relational data and vector data to be managed within PostgreSQL.
+
+39. What is a vector database?
+
+A vector database stores numerical vectors and supports similarity searches to find related data.
+
+40. What is the difference between SQL search and vector search?
+SQL keyword search	Vector search
+Matches exact values or patterns	Finds semantic similarity
+Uses SQL conditions	Uses vector distance
+Useful for structured queries	Useful for AI-powered search
+
+41. What is an index in PostgreSQL?
+
+An index is a database structure that improves data retrieval speed by reducing the amount of data that must be scanned.
+
+42. What is a primary key?
+
+A primary key uniquely identifies each row in a database table.
+
+43. What is a foreign key?
+
+A foreign key establishes a relationship between two tables and helps maintain referential integrity.
+
+Section 5: React and TypeScript
+44. What is React?
+
+React is a JavaScript library used to build interactive user interfaces using reusable components.
+
+45. What is JSX?
+
+JSX is a syntax extension that allows developers to write HTML-like structures inside JavaScript or TypeScript React components.
+
+46. What are React hooks?
+
+Hooks are functions that allow functional components to use React features.
+
+Examples:
+- useState
+- useEffect
+- useContext
+- useRef
+47. What is TypeScript?
+
+TypeScript is a programming language built on JavaScript that adds static typing and other development features.
+
+48. What is Zustand?
+
+Zustand is a lightweight state-management library for React.
+
+In Memento, it can manage shared application state such as user information, chat sessions and UI state.
+
+49. What is Vite?
+
+Vite is a frontend development and build tool that provides a fast development server and production build process.
+
+50. How does React communicate with Spring Boot?
+
+React communicates with Spring Boot using HTTP requests through APIs. Data is commonly exchanged in JSON format.
+
+Section 6: Security, APIs and Advanced Concepts
+51. What is JWT?
+
+JWT stands for JSON Web Token. It is a compact token format used to securely transmit claims between parties and commonly used for authentication.
+
+52. What are the three parts of JWT?
+1. Header
+2. Payload
+3. Signature
+53. What is Spring Security?
+
+Spring Security is a framework that handles authentication, authorization and security-related protection in Spring applications.
+
+54. What is CORS?
+
+CORS stands for Cross-Origin Resource Sharing. It is a browser security mechanism that controls whether a frontend from one origin can access resources from another origin.
+
+55. What is SSE?
+
+SSE stands for Server-Sent Events. It allows a server to send a continuous stream of events to a client over HTTP.
+
+56. What is the difference between SSE and WebSockets?
+SSE	WebSockets
+Primarily server-to-client	Bidirectional communication
+Uses HTTP	Uses WebSocket protocol
+Suitable for streaming AI responses	Suitable for real-time two-way communication
+
+57. What is Maven?
+
+Maven is a Java build automation and dependency management tool.
+
+Its main configuration file is pom.xml.
+
+58. What is the difference between Maven and npm?
+- Maven manages Java dependencies and builds.
+- npm manages JavaScript/TypeScript project dependencies and scripts.
+59. How do you handle exceptions in Spring Boot?
+
+We can use @ControllerAdvice and @ExceptionHandler to handle exceptions globally and return appropriate HTTP status codes.
+
+60. How would you improve Memento in the future?
+
+Possible improvements include:
+- Support more document formats.
+- Add document-level access permissions.
+- Improve retrieval using hybrid search.
+- Add reranking for better search relevance.
+- Add document summarization.
+- Improve evaluation of RAG accuracy.
+- Add scalable background document processing.
