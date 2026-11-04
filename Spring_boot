@@ -1,0 +1,517 @@
+Top 50 Spring Boot Interview Questions with Answers
+These are important Spring Boot interview questions for freshers and Java Full Stack Developer roles, particularly for campus placements.
+
+Since you're learning Java Spring Boot microservices with PostgreSQL and Maven, I've included fundamentals, REST APIs, JPA, security, microservices and practical coding questions.
+1. Spring and Spring Boot Fundamentals
+1. What is Spring Framework?
+
+Spring is a Java framework used to develop enterprise applications. It provides features such as Dependency Injection, Inversion of Control, transaction management and web application development.
+
+2. What is Spring Boot?
+
+Spring Boot is built on top of the Spring Framework. It simplifies application development by providing:
+- Auto-configuration
+- Starter dependencies
+- Embedded servers
+- Production-ready features
+- Minimal configuration
+3. Difference between Spring and Spring Boot?
+Spring	Spring Boot
+Requires more configuration	Minimal configuration
+Server configuration may be external	Embedded server available
+Dependencies configured individually	Starter dependencies
+Auto-configuration is not the default approach	Provides auto-configuration
+More setup required	Faster development
+
+4. What are the advantages of Spring Boot?
+1. Easy configuration.
+2. Embedded Tomcat server.
+3. Faster development.
+4. Auto-configuration.
+5. Starter dependencies.
+6. Easy microservices development.
+5. What is auto-configuration in Spring Boot?
+
+Auto-configuration automatically configures application components based on dependencies available in the classpath and application settings.
+
+Example: When Spring Web is added, Spring Boot configures the web application infrastructure.
+
+6. What is the @SpringBootApplication annotation?
+
+It is the main annotation used to start a Spring Boot application.
+
+It combines three annotations:
+- @Configuration
+- @EnableAutoConfiguration
+- @ComponentScan
+@SpringBootApplication
+public class StudentApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(StudentApplication.class, args);
+    }
+}
+
+
+7. What is an embedded server?
+
+An embedded server is included within the application, so we don't need to deploy the application separately to an external server.
+
+Examples:
+- Tomcat
+- Jetty
+- Undertow
+8. What is Spring Initializr?
+
+Spring Initializr is a web-based tool used to generate Spring Boot project structures with the required dependencies.
+
+Website: Spring Initializr
+
+9. What are Spring Boot Starter dependencies?
+
+Starter dependencies are predefined dependency collections that simplify Maven or Gradle configuration.
+
+Examples:
+Dependency	Purpose
+spring-boot-starter-web	REST APIs and web applications
+spring-boot-starter-data-jpa	Database operations
+spring-boot-starter-security	Authentication and authorization
+spring-boot-starter-validation	Input validation
+spring-boot-starter-test	Testing
+
+10. What is the difference between application.properties and application.yml?
+
+Both are used to configure Spring Boot applications.
+
+Properties:
+server.port=8081
+spring.application.name=student-service
+
+
+YAML:
+server:
+  port: 8081
+
+spring:
+  application:
+    name: student-service
+
+
+
+2. Spring Core and Dependency Injection
+11. What is IoC (Inversion of Control)?
+
+IoC means the Spring container manages the creation and lifecycle of objects instead of developers manually creating and managing all objects.
+
+12. What is Dependency Injection (DI)?
+
+Dependency Injection is a design pattern in which an object receives its dependencies from an external container rather than creating them itself.
+
+Example:
+@Service
+public class StudentService {
+
+    public void display() {
+        System.out.println("Student Service");
+    }
+}
+
+@RestController
+public class StudentController {
+
+    private final StudentService service;
+
+    public StudentController(StudentService service) {
+        this.service = service;
+    }
+}
+
+
+Here, Spring injects StudentService into StudentController.
+
+13. What is a Spring Bean?
+
+A Spring Bean is an object created, managed and maintained by the Spring IoC container.
+
+14. What is the Spring IoC container?
+
+It is responsible for:
+- Creating beans.
+- Injecting dependencies.
+- Managing bean lifecycle.
+- Managing bean configuration.
+15. Difference between @Component, @Service, @Repository and @Controller?
+Annotation	Purpose
+@Component	General Spring-managed bean
+@Service	Business logic layer
+@Repository	Data access layer
+@Controller	MVC controller
+
+@RestController is commonly used for REST APIs.
+
+16. What is @Autowired?
+
+It is used to inject dependencies automatically by Spring.
+@Autowired
+private StudentService studentService;
+
+
+Constructor injection is generally preferred over field injection because it supports immutability and makes dependencies explicit.
+
+17. What is the difference between constructor injection and setter injection?
+Constructor Injection	Setter Injection
+Dependency provided through constructor	Dependency provided through setter
+Good for mandatory dependencies	Good for optional dependencies
+Supports final fields	Usually requires mutable fields
+Recommended for most cases	Useful for optional dependencies
+
+18. What are bean scopes in Spring?
+
+Bean scope defines how Spring creates and manages bean instances.
+
+Common scopes:
+- Singleton – One instance per Spring IoC container.
+- Prototype – New instance whenever requested from the container.
+- Request – One instance per HTTP request.
+- Session – One instance per HTTP session.
+- Application – One instance per ServletContext.
+19. What is the difference between @Bean and @Component?
+- @Component: Marks a class for component scanning.
+- @Bean: Marks a method whose returned object should be managed by Spring.
+@Configuration
+class AppConfig {
+
+    @Bean
+    public Student student() {
+        return new Student();
+    }
+}
+
+
+20. What is the Spring Bean lifecycle?
+
+Main stages:
+1. Bean instantiation.
+2. Dependency injection.
+3. Initialization callbacks.
+4. Bean ready for use.
+5. Destruction callbacks when the context shuts down.
+
+3. REST API and HTTP Methods
+21. What is REST API?
+
+REST stands for Representational State Transfer.
+
+It is an architectural style used to build communication between applications over HTTP.
+
+22. What is @RestController?
+
+It combines @Controller and @ResponseBody.
+
+It is used to create REST APIs that return JSON or other response data directly.
+
+23. Difference between @Controller and @RestController?
+@Controller	@RestController
+Used for MVC applications	Used for REST APIs
+Usually returns view names	Returns response data
+May require @ResponseBody	Includes @ResponseBody automatically
+
+24. What is @RequestMapping?
+
+It maps HTTP requests to controller classes or methods.
+@RequestMapping("/students")
+@RestController
+public class StudentController {
+}
+
+
+25. Difference between GET, POST, PUT, PATCH and DELETE?
+HTTP Method	Purpose
+GET	Retrieve data
+POST	Create a resource
+PUT	Replace a resource
+PATCH	Partially update a resource
+DELETE	Delete a resource
+
+26. What is @PathVariable?
+
+It extracts a value from the URL path.
+@GetMapping("/students/{id}")
+public Student getStudent(@PathVariable Long id) {
+    return studentService.getStudent(id);
+}
+
+
+Example URL: /students/101
+
+27. What is @RequestParam?
+
+It extracts query parameters from the URL.
+@GetMapping("/students")
+public String getStudent(@RequestParam String name) {
+    return name;
+}
+
+
+Example: /students?name=Ganesh
+
+28. What is @RequestBody?
+
+It converts the incoming HTTP request body, usually JSON, into a Java object.
+@PostMapping("/students")
+public Student saveStudent(@RequestBody Student student) {
+    return studentService.save(student);
+}
+
+
+29. What is ResponseEntity?
+
+ResponseEntity represents the complete HTTP response, including:
+- Response body
+- HTTP status code
+- Headers
+@GetMapping("/{id}")
+public ResponseEntity<Student> getStudent(@PathVariable Long id) {
+    Student student = studentService.getStudent(id);
+    return ResponseEntity.ok(student);
+}
+
+
+30. What are common HTTP status codes?
+Code	Meaning
+200	OK
+201	Created
+204	No Content
+400	Bad Request
+401	Unauthorized
+403	Forbidden
+404	Not Found
+500	Internal Server Error
+
+
+4. Spring Boot with Database and JPA
+31. What is Spring Data JPA?
+
+Spring Data JPA simplifies database operations by providing repository interfaces and reducing boilerplate code.
+
+32. What is Hibernate?
+
+Hibernate is an ORM (Object Relational Mapping) framework that maps Java objects to relational database tables.
+
+33. Difference between JPA and Hibernate?
+JPA	Hibernate
+Specification	Implementation of JPA
+Defines ORM standards	Provides ORM functionality
+Defines annotations and interfaces	Implements those standards
+
+34. What is an Entity?
+
+An entity is a Java class mapped to a database table.
+@Entity
+@Table(name = "students")
+public class Student {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+    private String email;
+}
+
+
+35. What is JpaRepository?
+
+It is an interface provided by Spring Data JPA that provides built-in database operations.
+public interface StudentRepository
+        extends JpaRepository<Student, Long> {
+}
+
+
+Common methods:
+- save()
+- findById()
+- findAll()
+- deleteById()
+- existsById()
+- count()
+36. Difference between CrudRepository and JpaRepository?
+CrudRepository	JpaRepository
+Basic CRUD operations	CRUD plus JPA-specific operations
+More general abstraction	Extends ListCrudRepository and ListPagingAndSortingRepository
+Basic repository functionality	Includes flushing and batch-related operations
+
+37. What is @Transactional?
+
+It manages database transactions.
+
+If an operation fails with an applicable exception, Spring can roll back the transaction.
+@Transactional
+public void transferMoney() {
+    // Debit one account
+    // Credit another account
+}
+
+
+38. What is lazy loading and eager loading?
+- Lazy loading: Related data is loaded when accessed.
+- Eager loading: Related data is loaded immediately as part of the fetch operation.
+39. What is the difference between findById() and getReferenceById()?
+- findById(): Returns an Optional containing the entity if found.
+- getReferenceById(): Returns a reference, often lazily loaded. Missing entities may cause an exception when accessed.
+40. How do you connect PostgreSQL with Spring Boot?
+
+Add PostgreSQL and Spring Data JPA dependencies, then configure:
+spring.datasource.url=jdbc:postgresql://localhost:5432/studentdb
+spring.datasource.username=postgres
+spring.datasource.password=your_password
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+
+
+
+5. Advanced Spring Boot and Microservices
+41. What is Spring Security?
+
+Spring Security is a framework used to provide authentication, authorization and protection against common security attacks.
+
+42. What is JWT?
+
+JWT stands for JSON Web Token.
+
+It is a compact token format commonly used for stateless authentication.
+
+JWT has three parts:
+1. Header
+2. Payload
+3. Signature
+43. Difference between authentication and authorization?
+Authentication	Authorization
+Verifies who you are	Checks what you can access
+Login process	Permission checking
+Example: Username and password	Example: Admin-only access
+
+44. What are microservices?
+
+Microservices are an architectural approach where an application is divided into small, independently deployable services.
+
+For example, a college management system might contain:
+- Student Service
+- Course Service
+- Payment Service
+- Notification Service
+45. How do microservices communicate with each other?
+
+Common approaches:
+- REST API using HTTP.
+- OpenFeign.
+- WebClient.
+- Messaging systems such as RabbitMQ and Apache Kafka.
+46. What is Eureka Server?
+
+Eureka Server is a service registry used in Spring Cloud Netflix.
+
+Microservices register themselves with Eureka, and other services can discover them.
+
+47. What is API Gateway?
+
+API Gateway provides a single entry point for client requests.
+
+Responsibilities include:
+- Request routing.
+- Authentication.
+- Rate limiting.
+- Load balancing integration.
+- Request filtering.
+48. What is Spring Cloud Config?
+
+It provides centralized configuration management for distributed applications.
+
+49. What is the Circuit Breaker pattern?
+
+It prevents repeated calls to a failing service and helps avoid cascading failures.
+
+Resilience4j is a popular library for implementing circuit breakers in Spring Boot.
+
+50. What is Actuator in Spring Boot?
+
+Spring Boot Actuator provides production-ready monitoring and management endpoints.
+
+Examples:
+- /actuator/health
+- /actuator/info
+- /actuator/metrics
+
+6. Practical Spring Boot Coding Questions
+These are important because interviewers often ask you to explain your own project implementation.
+1. Create a REST API to save a student
+@RestController
+@RequestMapping("/students")
+public class StudentController {
+
+    @Autowired
+    private StudentRepository repository;
+
+    @PostMapping
+    public Student saveStudent(@RequestBody Student student) {
+        return repository.save(student);
+    }
+}
+
+
+2. Fetch all students
+@GetMapping
+public List<Student> getAllStudents() {
+    return repository.findAll();
+}
+
+
+3. Fetch student by ID
+@GetMapping("/{id}")
+public ResponseEntity<Student> getStudent(@PathVariable Long id) {
+
+    return repository.findById(id)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
+}
+
+
+4. Update student
+@PutMapping("/{id}")
+public ResponseEntity<Student> updateStudent(
+        @PathVariable Long id,
+        @RequestBody Student student) {
+
+    return repository.findById(id).map(existing -> {
+        existing.setName(student.getName());
+        existing.setEmail(student.getEmail());
+
+        return ResponseEntity.ok(repository.save(existing));
+    }).orElse(ResponseEntity.notFound().build());
+}
+
+
+5. Delete student
+@DeleteMapping("/{id}")
+public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
+
+    if (!repository.existsById(id)) {
+        return ResponseEntity.notFound().build();
+    }
+
+    repository.deleteById(id);
+    return ResponseEntity.noContent().build();
+}
+
+
+
+7. Most Important Topics to Prepare for Interviews
+Priority	Topic	What to prepare
+1	Spring Core	IoC, DI, Beans
+2	REST API	HTTP methods, annotations
+3	Spring Data JPA	Entity, Repository, Hibernate
+4	Spring Boot	Auto-configuration, starters
+5	PostgreSQL	Joins, relationships, queries
+6	Spring Security	JWT, authentication
+7	Microservices	Eureka, Gateway, Feign
+8	Testing	JUnit, Mockito
