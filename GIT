@@ -1,0 +1,225 @@
+Git and GitHub Commands – Complete Guide
+Git is a Version Control System (VCS) used to track changes in source code. GitHub is a cloud-based platform used to store Git repositories and collaborate with developers.
+- Git: Manages code versions locally.
+- GitHub: Hosts repositories online and supports collaboration.
+1. Basic Git Commands
+Command	Purpose
+git --version	Check Git version
+git config --global user.name "Ganesh C"	Set username
+git config --global user.email "email"	Set email
+git config --list	View Git configuration
+git help	Open Git help
+
+2. Repository Commands
+Command	Purpose
+git init	Initialize a Git repository
+git clone URL	Clone a GitHub repository
+git status	Check file status
+git log	View commit history
+git log --oneline	Compact commit history
+git log --all --graph --oneline	Visualize branches and commits
+git show	Display latest commit details
+
+3. Important Daily Git Commands
+Most important for interviews and projects
+Command	Purpose
+git add filename	Stage a specific file
+git add .	Stage all changes in current directory
+git commit -m "message"	Save changes as a commit
+git push	Upload commits to remote
+git pull	Fetch and integrate remote changes
+git fetch	Download remote changes without merging
+git diff	Show unstaged changes
+git diff --staged	Show staged changes
+
+Typical workflow:
+git status
+git add .
+git commit -m "Added student CRUD operations"
+git push
+
+
+4. Git Branch Commands
+Branches allow multiple developers to work on different features without affecting the main code.
+Command	Purpose
+git branch	List local branches
+git branch feature-login	Create a branch
+git switch feature-login	Switch branch
+git switch -c feature-login	Create and switch branch
+git checkout branch-name	Switch branch (older syntax)
+git merge feature-login	Merge branch into current branch
+git branch -d feature-login	Delete merged branch
+git branch -D feature-login	Force-delete a branch
+
+Example:
+git switch -c feature-authentication
+
+# Make code changes
+
+git add .
+git commit -m "Implemented authentication"
+
+git switch main
+git merge feature-authentication
+
+
+5. GitHub Remote Commands
+Remote means a repository hosted on GitHub or another server.
+Command	Purpose
+git remote -v	Display remote URLs
+git remote add origin URL	Connect local repository to GitHub
+git remote remove origin	Remove remote
+git remote set-url origin URL	Change remote URL
+git push -u origin main	Push and set upstream
+git push origin main	Push main branch
+git pull origin main	Pull main branch
+git fetch origin	Fetch from GitHub
+
+6. Undo and Reset Commands
+Command	Purpose
+git restore filename	Discard unstaged file changes
+git restore --staged filename	Unstage a file
+git reset --soft HEAD~1	Undo last commit, keep staged changes
+git reset --mixed HEAD~1	Undo commit, keep working changes unstaged
+git reset --hard HEAD~1	Remove last commit and its changes
+git revert commit-id	Create a commit that reverses another commit
+git stash	Temporarily save changes
+git stash pop	Restore stashed changes
+
+Be careful
+ git reset --hard can permanently discard uncommitted work.
+7. Git Stash Commands
+Suppose you are developing a login feature but suddenly need to fix a bug in another branch.
+git stash
+git switch main
+
+# Fix the bug
+
+git switch feature-login
+git stash pop
+
+
+Other useful commands:
+git stash list
+git stash apply
+git stash drop
+git stash clear
+
+
+8. Git Merge and Conflict Commands
+A merge conflict occurs when Git cannot automatically combine changes, commonly because two developers modify the same lines.
+git switch main
+git merge feature-login
+
+
+If a conflict occurs:
+1. Open the conflicting file.
+2. Identify the conflicting code.
+3. Choose or combine the correct changes.
+4. Remove conflict markers.
+5. Stage and commit.
+git add .
+git commit -m "Resolved merge conflict"
+
+
+9. Git Tag Commands
+Tags are used to mark important versions of a project.
+git tag
+git tag v1.0
+git tag -a v1.0 -m "First release"
+git push origin v1.0
+git push origin --tags
+git tag -d v1.0
+
+
+10. GitHub Collaboration Commands
+Command	Purpose
+git clone URL	Download a repository
+git fork	No standard Git command; fork using GitHub UI
+git remote add upstream URL	Connect original repository
+git fetch upstream	Fetch original repository updates
+git merge upstream/main	Merge original repository updates
+git push origin feature-branch	Push your feature branch
+
+
+11. Complete Real-Time Project Workflow
+Imagine you are working on your Spring Boot Student Management project with two developers.
+Developer workflow
+GitHub Repository
+
+Central remote repository
+
+
+Developer 1
+
+Student Service
+
+feature-student
+
+
+Developer 2
+
+Authentication
+
+feature-auth
+
+
+
+
+Pull Request → Code Review → Merge
+
+Changes integrated into main
+
+
+Developer 1 commands:
+git clone https://github.com/username/project.git
+
+cd project
+
+git switch -c feature-student
+
+# Implement Student CRUD
+
+git add .
+git commit -m "Added Student CRUD API"
+
+git push -u origin feature-student
+
+
+Then create a Pull Request on GitHub.
+
+Developer 2 commands:
+git clone https://github.com/username/project.git
+
+cd project
+
+git switch -c feature-auth
+
+# Implement authentication
+
+git add .
+git commit -m "Added JWT authentication"
+
+git push -u origin feature-auth
+
+
+Both developers create separate Pull Requests. After review and approval, merge them into main.
+
+12. Top Git and GitHub Interview Questions
+Question	Important concept
+What is Git vs GitHub?	Local VCS vs cloud hosting
+What is a repository?	Project tracked by Git
+What is a commit?	Snapshot of changes
+What is staging?	Preparing changes for commit
+What is a branch?	Independent development line
+What is merge?	Combining branches
+What is rebase?	Reapplying commits on another base
+Git pull vs fetch?	Fetch downloads; pull integrates
+Merge vs rebase?	Merge preserves branch history; rebase rewrites commit history
+What is a merge conflict?	Incompatible changes
+What is a Pull Request?	Request to review and merge changes
+What is fork?	Personal GitHub copy of a repository
+What is .gitignore?	Specifies untracked files Git should ignore
+What is HEAD?	Reference to the current checkout
+What is cherry-pick?	Apply a specific commit elsewhere
+What is revert vs reset?	Revert creates an undo commit; reset moves a branch reference
