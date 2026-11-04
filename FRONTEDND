@@ -1,0 +1,748 @@
+Top 100 Frontend Interview Questions with Answers – JavaScript + React + HTML + CSS
+These questions are suitable for fresher and entry-level Full Stack Java Developer interviews. Answers are written in an interview-friendly format with examples.
+1. JavaScript Interview Questions with Answers (30)
+1. What is JavaScript?
+JavaScript is a high-level, dynamically typed programming language used to make web pages interactive.
+
+Features:
+- Dynamic typing.
+- Event-driven programming.
+- Asynchronous programming.
+- Object-oriented programming.
+- Runs in browsers and server environments like Node.js.
+2. Difference between var, let and const?
+Feature	var	let	const
+Scope	Function	Block	Block
+Redeclaration	Yes	No	No
+Reassignment	Yes	Yes	No
+Hoisting	Yes	Yes (TDZ)	Yes (TDZ)
+
+var a = 10;
+let b = 20;
+const c = 30;
+
+b = 40; // Allowed
+// c = 40; // Error
+
+
+3. What are primitive and non-primitive data types?
+Primitive types:
+- Number
+- String
+- Boolean
+- Undefined
+- Null
+- BigInt
+- Symbol
+Non-primitive types:
+- Objects
+- Arrays
+- Functions
+Primitive values are immutable values, whereas objects can be modified through their references.
+4. Difference between == and ===?
+- == compares values after type conversion when necessary.
+- === compares both value and data type without type conversion.
+console.log(5 == "5");  // true
+console.log(5 === "5"); // false
+
+
+5. What is hoisting?
+Hoisting is JavaScript's behavior of processing declarations before executing code in their scope.
+console.log(a); // undefined
+var a = 10;
+
+
+With let and const, accessing the variable before initialization causes a ReferenceError because of the Temporal Dead Zone.
+6. What is the Temporal Dead Zone (TDZ)?
+TDZ is the period between entering a block scope and initializing a let or const variable.
+console.log(x); // ReferenceError
+let x = 10;
+
+
+7. What is a closure?
+A closure occurs when an inner function remembers and accesses variables from its outer function even after the outer function has finished executing.
+function counter() {
+    let count = 0;
+
+    return function() {
+        count++;
+        console.log(count);
+    };
+}
+
+const result = counter();
+
+result(); // 1
+result(); // 2
+result(); // 3
+
+
+Real-time use: Private variables, counters, callbacks and maintaining state.
+8. What is lexical scope?
+Lexical scope means a function can access variables based on where it is defined in the source code.
+let name = "Ganesh";
+
+function display() {
+    console.log(name);
+}
+
+display(); // Ganesh
+
+
+9. Difference between null and undefined?
+null	undefined
+Intentional absence of value	Variable declared but not assigned
+Assigned explicitly	Usually assigned automatically
+typeof null returns object	typeof undefined returns undefined
+
+10. Difference between map(), filter() and reduce()?
+map(): Transforms every element and returns a new array.
+let arr = [1, 2, 3];
+
+let result = arr.map(x => x * 2);
+
+console.log(result); // [2, 4, 6]
+
+
+filter(): Returns elements satisfying a condition.
+let result = arr.filter(x => x > 1);
+
+console.log(result); // [2, 3]
+
+
+reduce(): Reduces an array to a single accumulated value.
+let result = arr.reduce((sum, x) => sum + x, 0);
+
+console.log(result); // 6
+
+
+11. Difference between forEach() and map()?
+- forEach() executes a function for each element and returns undefined.
+- map() transforms elements and returns a new array.
+12. What are arrow functions?
+Arrow functions provide a shorter syntax for writing functions.
+const add = (a, b) => a + b;
+
+console.log(add(10, 20)); // 30
+
+
+13. Difference between normal and arrow functions?
+Normal Function	Arrow Function
+Has its own this	Inherits lexical this
+Can be used as constructor	Cannot be used as constructor
+Has arguments object	No own arguments object
+Uses function keyword	Uses =>
+
+14. What is the this keyword?
+this refers to the execution context of a function. Its value depends on how the function is called.
+const user = {
+    name: "Ganesh",
+    display() {
+        console.log(this.name);
+    }
+};
+
+user.display(); // Ganesh
+
+
+15. What are callbacks?
+A callback is a function passed as an argument to another function and executed later.
+function greet(name, callback) {
+    console.log("Hello " + name);
+    callback();
+}
+
+greet("Ganesh", () => {
+    console.log("Welcome!");
+});
+
+
+16. What is callback hell?
+Callback hell occurs when multiple nested callbacks make code difficult to understand and maintain.
+
+Solution: Promises and async/await.
+17. What is a Promise?
+A Promise is an object representing the eventual completion or failure of an asynchronous operation.
+const promise = new Promise((resolve, reject) => {
+    let success = true;
+
+    if (success) {
+        resolve("Success");
+    } else {
+        reject("Failed");
+    }
+});
+
+promise.then(data => console.log(data))
+       .catch(error => console.log(error));
+
+
+18. Explain Promise states.
+A Promise has three states:
+1. Pending – Initial state.
+2. Fulfilled – Operation completed successfully.
+3. Rejected – Operation failed.
+19. Difference between async and await?
+- async makes a function return a Promise.
+- await pauses execution of the surrounding async function until a Promise settles.
+async function getUsers() {
+    try {
+        const response = await fetch("/api/users");
+        const data = await response.json();
+
+        console.log(data);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+20. What is the Event Loop?
+The Event Loop is the mechanism that coordinates JavaScript execution between the call stack and task queues.
+
+It allows JavaScript to handle asynchronous operations without blocking the main thread while waiting.
+21. Difference between synchronous and asynchronous JavaScript?
+- Synchronous: Executes operations one after another.
+- Asynchronous: Allows operations such as network requests to complete later without blocking the current execution.
+22. What are microtasks and macrotasks?
+Microtasks: Promise callbacks, queueMicrotask().
+
+Macrotasks: setTimeout(), setInterval(), and many event callbacks.
+
+Microtasks are generally processed before the next macrotask.
+23. What is the spread operator?
+The spread operator (...) expands elements of arrays or objects.
+let a = [1, 2, 3];
+
+let b = [...a, 4, 5];
+
+console.log(b); // [1,2,3,4,5]
+
+
+24. What is the rest operator?
+The rest operator collects multiple arguments into an array.
+function sum(...numbers) {
+    return numbers.reduce((a, b) => a + b, 0);
+}
+
+console.log(sum(10, 20, 30)); // 60
+
+
+25. What is destructuring?
+Destructuring extracts values from arrays or properties from objects.
+const user = {
+    name: "Ganesh",
+    age: 21
+};
+
+const { name, age } = user;
+
+
+26. What is optional chaining?
+Optional chaining (?.) safely accesses nested properties without throwing an error when an intermediate value is null or undefined.
+console.log(user.address?.city);
+
+
+27. What is event bubbling and event capturing?
+- Bubbling: Event travels from the target element towards its ancestors.
+- Capturing: Event travels from ancestors towards the target element.
+28. What is debouncing and throttling?
+Debouncing	Throttling
+Executes after calls stop for a specified period	Limits execution to a specified interval
+Useful for search boxes	Useful for scroll and resize events
+
+29. Difference between localStorage, sessionStorage and cookies?
+Feature	localStorage	sessionStorage	Cookies
+Lifetime	Until cleared	Until tab session ends	Configurable
+Storage	Browser	Browser tab	Browser
+Sent automatically to server	No	No	Yes, based on cookie settings
+Typical use	Preferences	Temporary session data	Session management
+
+30. Difference between shallow copy and deep copy?
+- Shallow copy copies only the first level; nested objects remain shared references.
+- Deep copy creates independent copies of nested objects too.
+// Shallow copy
+const copy = { ...original };
+
+// Deep copy for supported data types
+const deepCopy = structuredClone(original);
+
+
+
+2. React.js Interview Questions with Answers (30)
+Very important
+1. What is React.js?
+React is an open-source JavaScript library used to build user interfaces, especially single-page applications.
+
+It was developed by Meta.
+2. What are the features of React?
+1. Component-based architecture.
+2. Virtual DOM.
+3. Declarative UI.
+4. Reusable components.
+5. One-way data flow.
+6. Hooks.
+7. Large ecosystem.
+3. What is SPA?
+SPA stands for Single Page Application.
+
+It loads a single HTML page and dynamically updates the content without reloading the entire page for every navigation.
+
+Example: Gmail and many modern dashboards.
+4. What is JSX?
+JSX stands for JavaScript XML.
+
+It allows developers to write HTML-like syntax inside JavaScript.
+function App() {
+    return <h1>Hello Ganesh</h1>;
+}
+
+
+5. What is Virtual DOM?
+Virtual DOM is an in-memory representation of the UI.
+
+React uses it to determine what needs updating when the application state changes.
+6. Difference between Virtual DOM and Real DOM?
+Virtual DOM	Real DOM
+In-memory representation	Actual browser document
+Lightweight representation	Browser-managed tree
+React calculates UI changes	Browser applies DOM changes
+Used by React reconciliation	Used for actual rendering
+
+7. What are components in React?
+Components are reusable, independent building blocks of a React UI.
+function Header() {
+    return <h1>Welcome</h1>;
+}
+
+
+8. Difference between functional and class components?
+Functional	Class
+JavaScript functions	ES6 classes
+Uses Hooks	Uses lifecycle methods
+Less boilerplate	More boilerplate
+Recommended for modern React	Common in older applications
+
+9. What are props?
+Props are read-only inputs passed from a parent component to a child component.
+function Student(props) {
+    return <h1>{props.name}</h1>;
+}
+
+function App() {
+    return <Student name="Ganesh" />;
+}
+
+
+10. What is state in React?
+State is data managed by a component that can change over time.
+
+When state changes, React can render the component again.
+11. Difference between props and state?
+Props	State
+Passed from parent	Managed by component
+Read-only	Updated using state setter
+Used for communication	Used for dynamic data
+
+12. What is useState()?
+useState() is a React Hook used to add state to functional components.
+import { useState } from "react";
+
+function Counter() {
+    const [count, setCount] = useState(0);
+
+    return (
+        <>
+            <h1>{count}</h1>
+            <button onClick={() => setCount(c => c + 1)}>
+                Increment
+            </button>
+        </>
+    );
+}
+
+
+13. What is useEffect()?
+useEffect() is a Hook used to synchronize a component with external systems, such as APIs, subscriptions and browser events.
+useEffect(() => {
+    console.log("Component mounted");
+}, []);
+
+
+14. What is the dependency array in useEffect?
+The dependency array controls when an effect needs to run again.
+Syntax	Behavior
+No dependency array	After every commit
+[]	After initial mount
+[count]	After mount and when count changes
+
+15. What is the cleanup function in useEffect?
+Cleanup is used to remove subscriptions, clear timers, or cancel ongoing operations.
+useEffect(() => {
+    const timer = setInterval(() => {
+        console.log("Running");
+    }, 1000);
+
+    return () => clearInterval(timer);
+}, []);
+
+
+16. What is conditional rendering?
+Conditional rendering means displaying UI elements based on a condition.
+function App() {
+    const isLoggedIn = true;
+
+    return (
+        <div>
+            {isLoggedIn ? <h1>Welcome</h1> : <h1>Login</h1>}
+        </div>
+    );
+}
+
+
+17. How do you render lists in React?
+Using the map() method.
+const users = ["Ganesh", "Rahul", "Arun"];
+
+function App() {
+    return (
+        <ul>
+            {users.map((user, index) => (
+                <li key={index}>{user}</li>
+            ))}
+        </ul>
+    );
+}
+
+
+For lists that can change, prefer stable unique IDs instead of array indexes.
+18. Why do we use keys in React?
+Keys help React identify list items across renders, especially when elements are inserted, removed or reordered.
+19. What is prop drilling?
+Prop drilling means passing data through multiple intermediate components to reach a deeply nested component.
+
+Solution: Context API or a state management library.
+20. What is Context API?
+Context API allows components to share data without manually passing props through every intermediate component.
+
+Example: Authentication status, theme and language.
+21. What is useContext()?
+useContext() is a Hook used to consume values from a React Context.
+const ThemeContext = createContext("light");
+
+function App() {
+    return (
+        <ThemeContext.Provider value="dark">
+            <Home />
+        </ThemeContext.Provider>
+    );
+}
+
+function Home() {
+    const theme = useContext(ThemeContext);
+    return <h1>{theme}</h1>;
+}
+
+
+22. What is useRef()?
+useRef() stores a mutable value that persists between renders without triggering a re-render when changed.
+const inputRef = useRef(null);
+
+function focusInput() {
+    inputRef.current.focus();
+}
+
+return (
+    <>
+        <input ref={inputRef} />
+        <button onClick={focusInput}>Focus</button>
+    </>
+);
+
+
+23. What is useMemo()?
+useMemo() caches the result of a calculation between renders when its dependencies have not changed.
+const result = useMemo(() => {
+    return expensiveCalculation(number);
+}, [number]);
+
+
+24. What is useCallback()?
+useCallback() caches a function definition between renders when dependencies have not changed.
+const handleClick = useCallback(() => {
+    console.log("Clicked");
+}, []);
+
+
+25. Difference between useMemo and useCallback?
+useMemo	useCallback
+Caches calculated value	Caches function
+Returns a value	Returns a function
+Used for expensive calculations	Useful when stable function identity matters
+
+26. What are controlled and uncontrolled components?
+Controlled component: Form data is managed using React state.
+const [name, setName] = useState("");
+
+<input
+    value={name}
+    onChange={e => setName(e.target.value)}
+/>
+
+
+Uncontrolled component: Form data is managed by the DOM and accessed using refs.
+27. What is React Router?
+React Router is a routing library used to navigate between pages in a React application without full-page reloads.
+<Routes>
+    <Route path="/" element={<Home />} />
+    <Route path="/about" element={<About />} />
+</Routes>
+
+
+28. How do you call REST APIs in React?
+Using Fetch API or Axios.
+useEffect(() => {
+    fetch("http://localhost:8080/api/students")
+        .then(res => res.json())
+        .then(data => setStudents(data))
+        .catch(error => console.error(error));
+}, []);
+
+
+29. What is Redux?
+Redux is a state management library used to manage shared application state centrally.
+
+Important concepts:
+- Store
+- Actions
+- Reducers
+- Dispatch
+- Selectors
+30. How do you optimize React performance?
+1. Use React.memo where useful.
+2. Use useMemo for expensive calculations.
+3. Use useCallback when function identity matters.
+4. Use lazy loading.
+5. Avoid unnecessary state updates.
+6. Use pagination or virtualization for large lists.
+7. Keep component state close to where it is needed.
+
+3. HTML Interview Questions with Answers (15)
+No.	Question	Answer
+1	What is HTML?	HyperText Markup Language, used to structure web pages.
+2	What is HTML5?	The modern HTML standard with semantic elements, multimedia and new APIs.
+3	HTML vs HTML5?	HTML5 introduced semantic tags, audio, video, canvas and other modern features.
+4	What are semantic elements?	Elements that describe their meaning, such as header, footer, article and nav.
+5	div vs span?	div is block-level by default; span is inline by default.
+6	Block vs inline elements?	Block elements generally start on a new line; inline elements flow within a line.
+7	What is DOM?	Document Object Model, a tree representation of an HTML document.
+8	What are HTML attributes?	Additional information or configuration provided to elements.
+9	id vs class?	id identifies an element uniquely by convention; class can be shared by multiple elements.
+10	What is DOCTYPE?	It tells the browser to render the page in standards mode.
+11	What are meta tags?	They provide document metadata, such as charset and viewport.
+12	GET vs POST?	GET retrieves resources; POST submits data, commonly to create resources.
+13	What is form validation?	Checking user input before accepting or submitting it.
+14	What is localStorage?	Browser storage that persists until cleared.
+15	What is accessibility?	Designing websites so people with different abilities can use them.
+
+Important HTML example
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>My Website</title>
+</head>
+<body>
+    <header>
+        <h1>My Portfolio</h1>
+    </header>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+    </nav>
+
+    <main>
+        <section>
+            <h2>About Me</h2>
+            <p>Computer Science Student</p>
+        </section>
+    </main>
+
+    <footer>Copyright 2026</footer>
+</body>
+</html>
+
+
+
+4. CSS Interview Questions with Answers (15)
+No.	Question	Answer
+1	What is CSS?	Cascading Style Sheets, used to style HTML elements.
+2	Types of CSS?	Inline, internal and external CSS.
+3	What is Box Model?	Content, padding, border and margin.
+4	Margin vs padding?	Margin is outside the border; padding is inside the border.
+5	What is position relative?	Positions an element relative to its normal position.
+6	What is absolute positioning?	Positions an element relative to its nearest positioned ancestor.
+7	What is fixed positioning?	Positions an element relative to the viewport.
+8	What is sticky positioning?	Behaves relatively until a scroll threshold is reached, then sticks.
+9	What is Flexbox?	A one-dimensional CSS layout system.
+10	What is CSS Grid?	A two-dimensional layout system for rows and columns.
+11	Flexbox vs Grid?	Flexbox handles one-dimensional layouts; Grid handles two-dimensional layouts.
+12	What is specificity?	Rules that determine which CSS selector wins when declarations conflict.
+13	What is z-index?	Controls stacking order of positioned elements and relevant stacking contexts.
+14	What are media queries?	CSS rules used to apply styles based on viewport or device conditions.
+15	What is responsive design?	Designing interfaces that adapt to different screen sizes.
+
+Important CSS example
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.card {
+    width: 300px;
+    padding: 20px;
+    margin: 10px;
+    border: 1px solid black;
+    border-radius: 10px;
+}
+
+
+
+5. Real-Time Scenario-Based Interview Questions with Answers
+Important for product-based and service-based companies
+These questions test your practical understanding of frontend development.
+1. How do you prevent multiple API calls when a user types in a search box?
+Answer: I use debouncing. It delays the API call until the user stops typing for a specified duration.
+let timer;
+
+function search(value) {
+    clearTimeout(timer);
+
+    timer = setTimeout(() => {
+        fetch(`/api/search?q=${encodeURIComponent(value)}`);
+    }, 500);
+}
+
+
+2. What happens if an API takes 10 seconds to respond?
+Answer: I display a loading indicator, handle errors, and optionally configure a timeout or cancellation mechanism.
+{loading && <p>Loading...</p>}
+{error && <p>Something went wrong</p>}
+{data && <UserList users={data} />}
+
+
+3. How do you prevent duplicate form submissions?
+Answer: I disable the submit button while the request is in progress and also use backend idempotency for critical operations.
+4. How do you implement login and logout?
+Answer:
+1. User enters credentials.
+2. React sends credentials to the backend.
+3. Spring Boot validates the credentials.
+4. Backend issues an authentication token or session.
+5. Frontend uses the authenticated session for protected API requests.
+6. Logout invalidates the session or token as appropriate.
+For browser applications, secure HttpOnly cookies are generally preferable for session or refresh-token storage over localStorage.
+5. How do you maintain login after refreshing the browser?
+Answer: I use a persistent authentication mechanism such as a server-managed session or secure HttpOnly cookie. On application startup, the frontend checks the session with the backend.
+6. How do you display 10,000 records efficiently?
+Answer: I use server-side pagination, filtering, and sorting. For large visible lists, I can also use virtualization to render only the items currently on screen.
+7. How do you handle API failure?
+Answer: I use try-catch, display meaningful error messages, provide retry functionality where appropriate, and handle HTTP status codes.
+8. How do you implement pagination?
+Answer: I maintain the current page and page size in state and request only the required records from the backend.
+9. How do you prevent unauthorized users from accessing a page?
+Answer: I use protected routes in React for navigation and enforce authorization in Spring Boot for every protected API. Frontend route protection alone is not security.
+10. How would you implement real-time notifications?
+Answer: I can use WebSockets or Server-Sent Events to receive updates from the backend without repeatedly polling the API.
+11. Two users edit the same information simultaneously. What do you do?
+Answer: I would use optimistic locking with a version field on the backend. If one user updates the record first, the second user's stale update is rejected and they are asked to refresh.
+12. How do you share data between unrelated components?
+Answer: I can use Context API, Redux, or another shared state management solution.
+13. How do you prevent unnecessary component re-rendering?
+Answer: I identify the source of unnecessary renders and use React.memo, useMemo, useCallback, and appropriate state placement where they actually improve performance.
+14. How do you handle slow-loading images?
+Answer: I use lazy loading, appropriately sized images, compression, responsive image formats, and placeholders.
+15. How do you build a frontend for a high-traffic application?
+Answer: I focus on:
+- Code splitting and lazy loading.
+- CDN and browser caching.
+- Optimized API calls.
+- Pagination and virtualization.
+- Image optimization.
+- Efficient state management.
+- Error handling and monitoring.
+- Backend scalability.
+
+6. JavaScript Coding Interview Questions
+These are particularly important for fresher coding rounds.
+No.	Problem	Expected concept
+1	Reverse a string	String manipulation
+2	Check palindrome	Two pointers
+3	Find largest element	Array traversal
+4	Remove duplicates	Set
+5	Find second-largest element	Array traversal
+6	Character frequency	Map / Object
+7	Find missing number	Mathematics
+8	Check anagram	Sorting / frequency
+9	Flatten nested array	Recursion
+10	Find first non-repeating character	Map
+11	Sort array without sort()	Sorting algorithms
+12	Find duplicate elements	Set
+13	Reverse words in a sentence	String manipulation
+14	Find intersection of arrays	Set
+15	Implement debounce	Closures and timers
+
+Example: Remove duplicates from an array
+const arr = [1, 2, 2, 3, 4, 4, 5];
+
+const result = [...new Set(arr)];
+
+console.log(result);
+// [1, 2, 3, 4, 5]
+
+
+Example: Find second-largest element
+function secondLargest(arr) {
+    let largest = -Infinity;
+    let second = -Infinity;
+
+    for (let num of arr) {
+        if (num > largest) {
+            second = largest;
+            largest = num;
+        } else if (num > second && num !== largest) {
+            second = num;
+        }
+    }
+
+    return second === -Infinity ? null : second;
+}
+
+console.log(secondLargest([10, 20, 5, 30, 25]));
+// 25
+
+
+
+7. React + Spring Boot Integration Questions
+Since you are preparing for Full Stack Java Developer interviews, don't skip these.
+No.	Question	Short answer
+1	How does React communicate with Spring Boot?	Through HTTP REST APIs.
+2	What is Axios?	A JavaScript HTTP client.
+3	What is CORS?	A browser security mechanism controlling cross-origin requests.
+4	What is JSON?	A lightweight data-interchange format.
+5	What is JWT?	A compact token format used to transmit claims.
+6	What is REST API?	An API designed around REST architectural constraints.
+7	What is HTTP 200?	Request succeeded.
+8	What is HTTP 201?	Resource successfully created.
+9	What is HTTP 400?	Bad request.
+10	What is HTTP 401?	Authentication required or failed.
+11	What is HTTP 403?	Access forbidden.
+12	What is HTTP 404?	Resource not found.
+13	What is HTTP 500?	Internal server error.
+14	PUT vs PATCH?	PUT generally replaces a resource; PATCH partially updates it.
+15	How do you upload files?	Use FormData and multipart/form-data APIs.
